@@ -13,6 +13,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.dadmapp.ui.home.HomePage
 import com.example.dadmapp.ui.login.LoginPage
 import com.example.dadmapp.ui.theme.BgDark
 
@@ -43,7 +44,7 @@ fun DadmApp(
             }
             
             composable(route = RouteState.Home.title) {
-                Text(text = "HELLO!", color = Color.White)
+                HomePage()
             }
         }
     }

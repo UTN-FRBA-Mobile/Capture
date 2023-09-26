@@ -1,7 +1,7 @@
 package com.example.dadmapp.network
 
-import com.example.dadmapp.model.LoginRequest
-import com.example.dadmapp.model.LoginResponse
+import com.example.dadmapp.model.login.LoginRequest
+import com.example.dadmapp.model.login.LoginResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

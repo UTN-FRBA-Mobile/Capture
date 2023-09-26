@@ -17,10 +17,20 @@ import com.example.dadmapp.DADMAppApplication
 class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
     var logged by mutableStateOf(false)
 
+    init {
+        isLogged()
+    }
+
+    private fun isLogged() {
+        viewModelScope.launch {
+            val isLogged = userRepository.hasExistingToken()
+            logged = isLogged
+        }
+    }
+
     fun login(username: String, password: String) {
         viewModelScope.launch {
             userRepository.login(username, password)
-            Log.i("INFO", "Logged")
             logged = true
         }
     }

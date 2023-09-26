@@ -1,4 +1,4 @@
-package com.example.dadmapp.model
+package com.example.dadmapp.model.login
 
 import kotlinx.serialization.Serializable
 

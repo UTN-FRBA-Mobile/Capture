@@ -1,6 +1,5 @@
 package com.example.dadmapp.ui.login
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,7 +26,6 @@ fun LoginPage(
 
     if (viewModel.logged) {
         LaunchedEffect(Unit) {
-            Log.i("INFO", "\n\nACA\n\n")
             onLogin()
         }
     }
