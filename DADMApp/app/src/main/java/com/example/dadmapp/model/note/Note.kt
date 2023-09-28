@@ -6,6 +6,7 @@ import kotlinx.serialization.Serializable
 data class Note (
     val id: Int,
     val username: String,
+    val title: String? = null,
     val content: String? = null,
     val imageName: String? = null,
     val createdAt: String,

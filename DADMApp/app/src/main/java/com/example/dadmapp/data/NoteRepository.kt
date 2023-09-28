@@ -1,22 +1,17 @@
 package com.example.dadmapp.data
 
 import android.util.Log
+import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.network.NoteApiService
 
 interface NoteRepository {
-    suspend fun loadNotes(): Unit
+    suspend fun loadNotes(): List<Note>
 }
 
 class NetworkNoteRepository(
     private val noteApiService: NoteApiService
 ): NoteRepository {
-    override suspend fun loadNotes() {
-        try {
-            Log.d("INFO", "\n\nLOADING NOTES\n\n")
-            val res = noteApiService.loadNotes()
-            Log.d("INFO", res.toString())
-        } catch (e: Exception) {
-            e.message?.let { Log.d("ERR", it) }
-        }
+    override suspend fun loadNotes(): List<Note> {
+        return noteApiService.loadNotes()
     }
 }
