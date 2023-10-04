@@ -31,7 +31,9 @@ fun DadmApp(
     navController: NavHostController = rememberNavController()
 ) {
 
-    Scaffold{
+    Scaffold(
+        containerColor = BgDark
+    ) {
         _ ->
 
         NavHost(
@@ -39,7 +41,6 @@ fun DadmApp(
             startDestination = RouteState.Login.title,
             modifier = Modifier
                 .fillMaxSize()
-                .background(BgDark)
         ) {
             composable(route = RouteState.Login.title) {
                 LoginPage(onLogin = { navController.navigate(RouteState.Home.title) })

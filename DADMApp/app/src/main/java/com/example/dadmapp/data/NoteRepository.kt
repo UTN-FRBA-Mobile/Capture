@@ -1,6 +1,5 @@
 package com.example.dadmapp.data
 
-import android.util.Log
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.network.NoteApiService
 
