@@ -17,6 +17,8 @@ import kotlinx.coroutines.launch
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     var notes by mutableStateOf<List<Note>>(ArrayList())
 
+    var selectedNoteId by mutableStateOf<String?>(null)
+
     init {
         loadNotes()
     }
@@ -24,6 +26,14 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
     fun loadNotes() {
         viewModelScope.launch {
             notes = noteRepository.loadNotes()
+        }
+    }
+
+    fun onNewNote() {
+        viewModelScope.launch {
+            val newNote = noteRepository.createNote()
+            notes = notes + newNote
+            selectedNoteId = newNote.id.toString()
         }
     }
 

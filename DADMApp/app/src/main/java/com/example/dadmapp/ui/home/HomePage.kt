@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,11 +36,17 @@ import com.example.dadmapp.ui.theme.LightRed
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage() {
+fun HomePage(onNoteClick: (noteId: String) -> Unit) {
     val homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory)
 
     var showOptions by remember {
         mutableStateOf(false)
+    }
+
+    if (homePageViewModel.selectedNoteId != null) {
+        LaunchedEffect(Unit) {
+            onNoteClick(homePageViewModel.selectedNoteId!!)
+        }
     }
 
     Scaffold(
@@ -54,7 +61,7 @@ fun HomePage() {
                     ) {
                         DropdownOption(
                             "Create",
-                            { /* TODO */ },
+                            { homePageViewModel.onNewNote() },
                             Icons.Filled.Create,
                             "Create note with text"
                         )
@@ -83,7 +90,11 @@ fun HomePage() {
         ) {
             homePageViewModel.notes.map { note ->
                 Row(modifier = Modifier.padding(bottom = 15.dp)) {
-                    NotePreview(title = note.title, content = note.content ?: "")
+                    NotePreview(
+                        title = note.title,
+                        content = note.content ?: "",
+                        onNoteClick = { onNoteClick(note.id.toString()) }
+                    )
                 }
             }
         }

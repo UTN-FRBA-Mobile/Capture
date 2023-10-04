@@ -7,7 +7,7 @@ import okhttp3.Response
 class TokenInterceptor: Interceptor {
     private var token: String? = null
 
-    fun setToken(token: String) {
+    fun setToken(token: String?) {
         this.token = token
     }
 

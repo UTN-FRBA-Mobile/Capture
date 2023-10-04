@@ -1,5 +1,6 @@
 package com.example.dadmapp.data
 
+import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -9,14 +10,12 @@ import com.example.dadmapp.model.login.LoginRequest
 import com.example.dadmapp.network.AuthApiService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
-import java.lang.Exception
+import kotlin.Exception
 
 interface UserRepository {
     suspend fun login(username: String, password: String)
     suspend fun hasExistingToken(): Boolean
 }
-
-data class LoggedValue(var logged: Boolean)
 
 class NetworkUserRepository(
     private val authApiService: AuthApiService,
@@ -45,8 +44,15 @@ class NetworkUserRepository(
         }.firstOrNull()
 
         if (token != null) {
-            tokenInterceptor.setToken(token)
-            return true
+            try {
+                tokenInterceptor.setToken(token)
+                authApiService.valid()
+                return true
+            } catch (e: Exception) {
+                Log.d("INFO", "User not authorized")
+                tokenInterceptor.setToken(null)
+                return false
+            }
         }
 
         return false

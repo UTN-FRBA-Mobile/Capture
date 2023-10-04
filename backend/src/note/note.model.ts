@@ -13,6 +13,9 @@ export class Note extends Model {
   user: User;
 
   @Column
+  title: string;
+
+  @Column
   content: string;
 
   @AllowNull

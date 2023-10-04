@@ -1,6 +1,7 @@
 package com.example.dadmapp.ui.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,13 +26,15 @@ fun getText(text: String): String {
 @Composable
 fun NotePreview(
     title: String?,
-    content: String
+    content: String,
+    onNoteClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .border(width = 2.dp, color = AccentRed1, shape = RoundedCornerShape(5.dp))
             .fillMaxWidth()
             .padding(10.dp)
+            .clickable { onNoteClick() }
     ) {
         if (title != null) {
             Row {
