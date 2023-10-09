@@ -15,10 +15,8 @@ import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LargeFloatingActionButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,9 +34,10 @@ import com.example.dadmapp.ui.theme.LightRed
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePage(onNoteClick: (noteId: String) -> Unit) {
-    val homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory)
-
+fun HomePage(
+    onNoteClick: (noteId: String) -> Unit,
+    homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory)
+) {
     var showOptions by remember {
         mutableStateOf(false)
     }

@@ -1,5 +1,6 @@
 package com.example.dadmapp.ui.home
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -17,6 +18,7 @@ import kotlinx.coroutines.launch
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     var notes by mutableStateOf<List<Note>>(ArrayList())
 
+    var loadedNotes by mutableStateOf(false)
     var selectedNoteId by mutableStateOf<String?>(null)
 
     init {
@@ -25,7 +27,13 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
 
     fun loadNotes() {
         viewModelScope.launch {
-            notes = noteRepository.loadNotes()
+            if (loadedNotes) {
+                Log.d("INFO", "Notes already loaded")
+            } else {
+                Log.d("INFO", "Loading notes")
+                notes = noteRepository.loadNotes()
+                loadedNotes = true
+            }
         }
     }
 

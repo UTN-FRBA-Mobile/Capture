@@ -4,9 +4,9 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -14,13 +14,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.dadmapp.ui.home.HomePage
+import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.login.LoginPage
+import com.example.dadmapp.ui.note.NotePage
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
     Login("Login"),
     Home("Home"),
-    ViewNote("ViewNote")
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -29,7 +30,6 @@ enum class RouteState(val title: String) {
 fun DadmApp(
     navController: NavHostController = rememberNavController()
 ) {
-
     Scaffold(
         containerColor = BgDark
     ) {
@@ -46,7 +46,8 @@ fun DadmApp(
             }
             
             composable(RouteState.Home.title) {
-                HomePage(onNoteClick = { noteId: String -> navController.navigate("note/$noteId") })
+                val vm = viewModel<HomePageViewModel>(factory = HomePageViewModel.Factory)
+                HomePage(onNoteClick = { noteId: String -> navController.navigate("note/$noteId") }, vm)
             }
 
             composable(
@@ -54,7 +55,9 @@ fun DadmApp(
                 arguments = listOf(navArgument("noteId") { type = NavType.StringType })
             ) {
                 backStackEntry ->
-                Text("Note ID is " + backStackEntry.arguments?.getString("noteId"))
+                NotePage(
+                    onBackClick = { navController.navigate(RouteState.Home.title) }
+                )
             }
         }
     }
