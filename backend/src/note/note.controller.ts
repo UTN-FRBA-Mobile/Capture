@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { NoteService } from './note.service';
 import { NewNoteDto } from './dto/newNote.dto';
 import { JwtAuthGuard } from '../auth/guards/jwtAuth.guard';
@@ -18,5 +26,10 @@ export class NoteController {
   @Get('')
   async fetchAllForUser(@User() jwtUser: JwtPayload) {
     return this.noteService.fetchAllForUser(jwtUser.username);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string | number) {
+    return this.noteService.delete(id);
   }
 }

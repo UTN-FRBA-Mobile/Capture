@@ -43,6 +43,5 @@ fun CustomTextField(
         ),
         keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(keyboardType = KeyboardType.Text),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
-
     )
 }

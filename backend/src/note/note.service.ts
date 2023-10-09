@@ -21,4 +21,8 @@ export class NoteService {
       },
     });
   }
+
+  async delete(id: string | number) {
+    await this.noteModel.destroy({ where: { id } });
+  }
 }
