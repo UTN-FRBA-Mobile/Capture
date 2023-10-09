@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
+import com.example.dadmapp.utils.formattedDateStr
+import com.example.dadmapp.utils.formattedTimeStr
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -89,7 +91,7 @@ fun NotePage(
         },
         bottomBar = {
             Text(
-                text = "Ultima vez editado...",
+                text = "Editado por ultima vez el " + formattedDateStr(note.updatedAt) + " a las " + formattedTimeStr(note.updatedAt),
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),

@@ -7,6 +7,7 @@ import com.example.dadmapp.network.body.UpdateNoteBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import java.lang.Exception
+import java.time.Instant
 
 interface NoteRepository {
     suspend fun loadNotes(): MutableStateFlow<List<Note>>
@@ -65,7 +66,11 @@ class NetworkNoteRepository(
         notesFlow.update { arr -> arr.map {
                 n ->
                 if (n.id.toString() == id) {
-                    n.copy(title = bodyTitle, content = bodyContent)
+                    n.copy(
+                        title = bodyTitle,
+                        content = bodyContent,
+                        updatedAt = Instant.now().toString()
+                    )
                 } else {
                     n
                 }

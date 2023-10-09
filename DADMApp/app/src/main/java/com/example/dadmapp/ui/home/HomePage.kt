@@ -93,6 +93,7 @@ fun HomePage(
                     NotePreview(
                         title = note.title,
                         content = note.content ?: "",
+                        date = note.createdAt,
                         onNoteClick = { onNoteClick(note.id.toString()) }
                     )
                 }

@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.dadmapp.ui.theme.AccentRed1
+import com.example.dadmapp.utils.formattedDateStr
 
 fun getText(text: String): String {
     val maxLength = 200
@@ -27,6 +28,7 @@ fun getText(text: String): String {
 fun NotePreview(
     title: String?,
     content: String,
+    date: String,
     onNoteClick: () -> Unit
 ) {
     Column(
@@ -46,7 +48,7 @@ fun NotePreview(
             CustomText(text = getText(content))
         }
         Row {
-            CustomText(text = "16/09/2023", fontSize = 14.sp)
+            CustomText(text = formattedDateStr(date), fontSize = 14.sp)
         }
     }
 }
