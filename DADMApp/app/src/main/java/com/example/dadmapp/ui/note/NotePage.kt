@@ -48,10 +48,26 @@ fun NotePage(
     noteId: String
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val note = notePageViewModel.getNote(noteId)
 
-    fun onDeleteNote(id: String) {
+    var titleVal by remember {
+        mutableStateOf(note.title)
+    }
+
+    var contentVal by remember {
+        mutableStateOf(note.content)
+    }
+
+    fun onDeleteNote() {
         coroutineScope.launch {
-            notePageViewModel.deleteNote(id)
+            notePageViewModel.deleteNote(noteId)
+            onBackClick()
+        }
+    }
+
+    fun onBack() {
+        coroutineScope.launch {
+            notePageViewModel.updateNote(noteId, titleVal, contentVal)
             onBackClick()
         }
     }
@@ -63,10 +79,10 @@ fun NotePage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                IconButton(onClick = { onBackClick() }) {
+                IconButton(onClick = { onBack() }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Back icon", tint = Color.White)
                 }
-                IconButton(onClick = { onDeleteNote(noteId) }) {
+                IconButton(onClick = { onDeleteNote() }) {
                     Icon(Icons.Filled.Delete, contentDescription = "Delete note", tint = Color.White)
                 }
             }
@@ -90,10 +106,10 @@ fun NotePage(
                 )
         ) {
             Row {
-                TitleTextField()
+                TitleTextField(value = titleVal ?: "", onTitleChange = { titleVal = it })
             }
             Row {
-                ContentTextField()
+                ContentTextField(value = contentVal ?: "", onContentChange = { contentVal = it })
             }
         }
     }
@@ -101,18 +117,14 @@ fun NotePage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleTextField() {
-    var value by remember {
-        mutableStateOf("")
-    }
-
+fun TitleTextField(value: String, onTitleChange: (newTitle: String) -> Unit) {
     val fontSize = 24.sp
 
     TextField(
         value = value,
         singleLine = true,
         placeholder = { Text(text = "Title", fontWeight = FontWeight.Bold, fontSize = fontSize) },
-        onValueChange = { value = it },
+        onValueChange = { onTitleChange(it) },
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,
             containerColor = BgDark,
@@ -128,16 +140,12 @@ fun TitleTextField() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ContentTextField() {
-    var value by remember {
-        mutableStateOf("")
-    }
-
+fun ContentTextField(value: String, onContentChange: (newContent: String) -> Unit) {
     val fontSize = 16.sp
 
     TextField(
         value = value,
-        onValueChange = { value = it },
+        onValueChange = { onContentChange(it) },
         placeholder = { Text(text = "Write something here...", fontSize = fontSize) },
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,

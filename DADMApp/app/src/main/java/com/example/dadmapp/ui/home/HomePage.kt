@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -87,7 +88,7 @@ fun HomePage(
                 .padding(10.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            homePageViewModel.notes.map { note ->
+            homePageViewModel.notesFlow?.collectAsState()?.value?.map { note ->
                 Row(modifier = Modifier.padding(bottom = 15.dp)) {
                     NotePreview(
                         title = note.title,

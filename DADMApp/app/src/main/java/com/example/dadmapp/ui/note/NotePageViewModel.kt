@@ -6,10 +6,19 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.data.NoteRepository
+import com.example.dadmapp.model.note.Note
 
 class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     suspend fun deleteNote(id: String) {
         noteRepository.deleteNote(id)
+    }
+
+    fun getNote(id: String): Note {
+        return noteRepository.getNoteById(id)
+    }
+
+    suspend fun updateNote(noteId: String, title: String?, content: String?) {
+        noteRepository.updateNote(noteId, title, content)
     }
 
     companion object {

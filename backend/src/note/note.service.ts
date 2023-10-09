@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Note } from './note.model';
 import { NewNoteDto } from './dto/newNote.dto';
+import { UpdateNoteDto } from './dto/updateNote.dto';
 
 @Injectable()
 export class NoteService {
@@ -24,5 +25,9 @@ export class NoteService {
 
   async delete(id: string | number) {
     await this.noteModel.destroy({ where: { id } });
+  }
+
+  async update(dto: UpdateNoteDto, id: string | number) {
+    return this.noteModel.update(dto, { where: { id } });
   }
 }

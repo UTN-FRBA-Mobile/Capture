@@ -13,34 +13,26 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.model.note.Note
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
-    var notes by mutableStateOf<List<Note>>(ArrayList())
-
-    var loadedNotes by mutableStateOf(false)
+    var notesFlow: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var selectedNoteId by mutableStateOf<String?>(null)
 
     init {
         loadNotes()
     }
 
-    fun loadNotes() {
+    private fun loadNotes() {
         viewModelScope.launch {
-            if (loadedNotes) {
-                Log.d("INFO", "Notes already loaded")
-            } else {
-                Log.d("INFO", "Loading notes")
-                notes = noteRepository.loadNotes()
-                loadedNotes = true
-            }
+            notesFlow = noteRepository.loadNotes()
         }
     }
 
     fun onNewNote() {
         viewModelScope.launch {
             val newNote = noteRepository.createNote()
-            notes = notes + newNote
             selectedNoteId = newNote.id.toString()
         }
     }
