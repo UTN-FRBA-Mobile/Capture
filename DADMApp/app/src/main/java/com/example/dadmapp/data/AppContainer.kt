@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.network.AuthApiService
 import com.example.dadmapp.network.NoteApiService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -49,6 +50,6 @@ class DefaultAppContainer(dataStore: DataStore<Preferences>): AppContainer {
 
     companion object {
         // Por ahora hardcodeamos esto pero deberia ser config de entorno
-        private const val BASE_URL = "http://10.0.2.2:3000"
+        private const val BASE_URL = LOCALHOST_URL
     }
 }

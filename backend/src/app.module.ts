@@ -4,6 +4,8 @@ import { UsersModule } from './users/user.module';
 import { User } from './users/user.model';
 import { NoteModule } from './note/note.module';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -17,6 +19,9 @@ import { AuthModule } from './auth/auth.module';
     UsersModule,
     NoteModule,
     AuthModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'imgs'),
+    }),
   ],
   controllers: [],
   providers: [],

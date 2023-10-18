@@ -120,6 +120,7 @@ fun HomePage(
                         title = note.title,
                         content = note.content ?: "",
                         date = note.createdAt,
+                        imageName = note.imageName,
                         onNoteClick = { onNoteClick(note.id.toString()) }
                     )
                 }

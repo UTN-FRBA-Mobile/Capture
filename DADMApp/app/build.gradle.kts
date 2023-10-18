@@ -83,4 +83,8 @@ dependencies {
 
     // Text recognition
     implementation("com.google.mlkit:text-recognition:16.0.0")
+
+    // Coil
+    implementation("io.coil-kt:coil:2.4.0")
+    implementation("io.coil-kt:coil-compose:2.4.0")
 }
