@@ -1,6 +1,10 @@
 package com.example.dadmapp.ui.home
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,11 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +60,15 @@ fun HomePage(
             onNoteClick(homePageViewModel.selectedNoteId!!)
         }
     }
+    val ctx = LocalContext.current
 
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
+        urlList ->
+            val uri = urlList[0]
+            val img = InputImage.fromFilePath(ctx, uri)
+
+            homePageViewModel.onNewNoteFromImage(img)
+    }
     Scaffold(
         containerColor = BgDark,
         floatingActionButton = {
@@ -63,6 +83,12 @@ fun HomePage(
                             "Create",
                             { homePageViewModel.onNewNote() },
                             Icons.Filled.Create,
+                            "Create note with text"
+                        )
+                        DropdownOption(
+                            "From image",
+                            { launcher.launch("image/*") },
+                            Icons.Filled.Add,
                             "Create note with text"
                         )
                     }
@@ -88,7 +114,7 @@ fun HomePage(
                 .padding(10.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            homePageViewModel.notesFlow?.collectAsState()?.value?.map { note ->
+            homePageViewModel.notes?.collectAsState()?.value?.map { note ->
                 Row(modifier = Modifier.padding(bottom = 15.dp)) {
                     NotePreview(
                         title = note.title,

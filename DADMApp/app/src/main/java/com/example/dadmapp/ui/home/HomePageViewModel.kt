@@ -1,6 +1,7 @@
 package com.example.dadmapp.ui.home
 
-import android.util.Log
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -13,11 +14,18 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.model.note.Note
+import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.ByteArrayOutputStream
 
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
-    var notesFlow: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
+    var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var selectedNoteId by mutableStateOf<String?>(null)
 
     init {
@@ -26,7 +34,7 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
 
     private fun loadNotes() {
         viewModelScope.launch {
-            notesFlow = noteRepository.loadNotes()
+            notes = noteRepository.loadNotes()
         }
     }
 
@@ -35,6 +43,19 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
             val newNote = noteRepository.createNote()
             selectedNoteId = newNote.id.toString()
         }
+    }
+
+    fun onNewNoteFromImage(img: InputImage) {
+        val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+        recognizer.process(img)
+            .addOnSuccessListener { text ->
+                if (img.bitmapInternal != null) {
+                    viewModelScope.launch {
+                        noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
+                    }
+                }
+            }
     }
 
 
