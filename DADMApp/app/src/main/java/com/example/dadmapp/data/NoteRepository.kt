@@ -44,7 +44,6 @@ class NetworkNoteRepository(
     }
 
     override fun getNoteById(id: String): Note {
-        Log.d("INFO", "Retrieving note $id")
         val r =  notes.value.find { n -> n.id.toString() == id }
 
         if (r === null) {

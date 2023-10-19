@@ -54,7 +54,6 @@ fun DadmApp(
                 "note/{noteId}",
                 arguments = listOf(navArgument("noteId") { type = NavType.StringType })
             ) {
-                backStackEntry ->
                 navController.currentBackStackEntry?.arguments?.getString("noteId")?.let {
                     NotePage(
                         onBackClick = { navController.navigate(RouteState.Home.title) },

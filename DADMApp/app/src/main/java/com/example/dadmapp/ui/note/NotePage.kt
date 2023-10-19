@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,13 +29,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.example.dadmapp.utils.formattedDateStr
@@ -51,6 +58,8 @@ fun NotePage(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val note = notePageViewModel.getNote(noteId)
+
+    val leftAndRightPadding = 10.dp
 
     var titleVal by remember {
         mutableStateOf(note.title)
@@ -104,9 +113,27 @@ fun NotePage(
             modifier = Modifier
                 .padding(
                     top = paddingValues.calculateTopPadding(),
-                    bottom = paddingValues.calculateBottomPadding()
+                    bottom = paddingValues.calculateBottomPadding(),
                 )
         ) {
+            if (note.imageName != null) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 15.dp)
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$LOCALHOST_URL/${note.imageName}")
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Image of the note",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(5.dp))
+                    )
+                }
+            }
             Row {
                 TitleTextField(value = titleVal ?: "", onTitleChange = { titleVal = it })
             }
