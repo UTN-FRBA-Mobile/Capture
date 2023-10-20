@@ -17,6 +17,7 @@ import com.example.dadmapp.ui.home.HomePage
 import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.login.LoginPage
 import com.example.dadmapp.ui.note.NotePage
+import com.example.dadmapp.ui.recordAudio.RecordAudioPage
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
@@ -47,7 +48,11 @@ fun DadmApp(
             
             composable(RouteState.Home.title) {
                 val vm = viewModel<HomePageViewModel>(factory = HomePageViewModel.Factory)
-                HomePage(onNoteClick = { noteId: String -> navController.navigate("note/$noteId") }, vm)
+                HomePage(
+                    { noteId: String -> navController.navigate("note/$noteId") },
+                    vm,
+                    { navController.navigate("recordAudio") }
+                )
             }
 
             composable(
@@ -60,6 +65,10 @@ fun DadmApp(
                         noteId = it
                     )
                 }
+            }
+
+            composable("recordAudio") {
+                RecordAudioPage()
             }
         }
     }

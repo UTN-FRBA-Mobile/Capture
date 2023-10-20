@@ -59,8 +59,6 @@ fun NotePage(
     val coroutineScope = rememberCoroutineScope()
     val note = notePageViewModel.getNote(noteId)
 
-    val leftAndRightPadding = 10.dp
-
     var titleVal by remember {
         mutableStateOf(note.title)
     }

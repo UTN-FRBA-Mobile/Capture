@@ -12,6 +12,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.lang.Exception
 import java.time.Instant
 
@@ -20,6 +21,7 @@ interface NoteRepository {
     fun getNoteById(id: String): Note
     suspend fun createNote(): Note
     suspend fun createNoteFromFile(image: Bitmap, imgText: String): Note
+    suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
     suspend fun updateNote(id: String, title: String?, content: String?)
 }
@@ -79,6 +81,28 @@ class NetworkNoteRepository(
         val textData = imgText.toRequestBody(MultipartBody.FORM)
 
         val note = noteApiService.createNoteFromImage(textData, bodyPart)
+        notes.update { notes -> notes + note }
+        return note
+    }
+
+    override suspend fun createNoteFromAudio(audio: File, text: String): Note {
+        val bytes = audio.readBytes()
+
+        val bodyData = bytes.toRequestBody(
+            "audio/*".toMediaTypeOrNull(),
+            0,
+            bytes.size
+        )
+
+        val bodyPart = MultipartBody.Part.createFormData(
+            "file",
+            "audio.mp3",
+            bodyData
+        )
+
+        val audioData = text.toRequestBody(MultipartBody.FORM)
+
+        val note = noteApiService.createNoteFromAudio(audioData, bodyPart)
         notes.update { notes -> notes + note }
         return note
     }

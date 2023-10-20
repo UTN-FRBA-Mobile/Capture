@@ -1,7 +1,5 @@
 package com.example.dadmapp.ui.home
 
-import android.graphics.Bitmap
-import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,10 +17,6 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
 
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())

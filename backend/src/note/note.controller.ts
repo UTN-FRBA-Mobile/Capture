@@ -54,6 +54,28 @@ export class NoteController {
     });
   }
 
+  @Post('create/audio')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './audio',
+        filename: (req, file, callback) => {
+          callback(undefined, uuidv4() + '.mp3');
+        },
+      }),
+    }),
+  )
+  createWithAudio(
+    @User() jwtUser: JwtPayload,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() body: { text: string },
+  ) {
+    return this.noteService.create(jwtUser.username, {
+      title: '',
+      content: body.text,
+    });
+  }
+
   @Get('')
   fetchAllForUser(@User() jwtUser: JwtPayload) {
     return this.noteService.fetchAllForUser(jwtUser.username);

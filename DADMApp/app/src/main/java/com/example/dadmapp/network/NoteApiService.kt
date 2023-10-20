@@ -27,6 +27,13 @@ interface NoteApiService {
         @Part image: MultipartBody.Part
     ): Note
 
+    @Multipart
+    @POST("note/create/audio")
+    suspend fun createNoteFromAudio(
+        @Part("text") noteText: RequestBody,
+        @Part audio: MultipartBody.Part
+    ): Note
+
     @DELETE("note/{id}")
     suspend fun deleteNote(@Path("id") id: String)
 

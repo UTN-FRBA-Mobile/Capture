@@ -1,8 +1,6 @@
 package com.example.dadmapp.ui.home
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,19 +36,13 @@ import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.google.mlkit.vision.common.InputImage
-import com.google.mlkit.vision.text.TextRecognition
-import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.ByteArrayOutputStream
-
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePage(
     onNoteClick: (noteId: String) -> Unit,
-    homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory)
+    homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory),
+    onRecordAudio: () -> Unit
 ) {
     var showOptions by remember {
         mutableStateOf(false)
@@ -69,6 +62,7 @@ fun HomePage(
 
             homePageViewModel.onNewNoteFromImage(img)
     }
+
     Scaffold(
         containerColor = BgDark,
         floatingActionButton = {
@@ -90,6 +84,12 @@ fun HomePage(
                             { launcher.launch("image/*") },
                             Icons.Filled.Add,
                             "Create note with text"
+                        )
+                        DropdownOption(
+                            "From audio",
+                            { onRecordAudio() },
+                            Icons.Filled.Call,
+                            "Create note from audio"
                         )
                     }
                 }
