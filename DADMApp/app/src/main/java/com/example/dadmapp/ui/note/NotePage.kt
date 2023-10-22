@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
@@ -120,7 +121,7 @@ fun NotePage(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$LOCALHOST_URL/${note.imageName}")
+                            .data("$LOCALHOST_URL/$IMGS_PATH/${note.imageName}")
                             .crossfade(true)
                             .build(),
                         contentDescription = "Image of the note",

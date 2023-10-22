@@ -35,7 +35,7 @@ export class NoteController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './imgs',
+        destination: './static/imgs',
         filename: (req, file, callback) => {
           callback(undefined, uuidv4() + '.jpeg');
         },
@@ -58,7 +58,7 @@ export class NoteController {
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
-        destination: './audio',
+        destination: './static/audio',
         filename: (req, file, callback) => {
           callback(undefined, uuidv4() + '.mp3');
         },

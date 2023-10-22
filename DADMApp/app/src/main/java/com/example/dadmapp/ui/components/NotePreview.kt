@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.utils.formattedDateStr
@@ -54,7 +55,7 @@ fun NotePreview(
             Row {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("$LOCALHOST_URL/$imageName")
+                        .data("$LOCALHOST_URL/$IMGS_PATH/$imageName")
                         .crossfade(true)
                         .build(),
                     contentDescription = "Image of the note",

@@ -1,5 +1,6 @@
 package com.example.dadmapp.ui.recordAudio
 
+import android.speech.SpeechRecognizer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -11,9 +12,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class RecordPageViewModel(private val noteRepository: NoteRepository): ViewModel() {
-    fun onNewNoteFromAudio(file: File) {
+    fun onNewNoteFromAudio(file: File, text: String) {
         viewModelScope.launch {
-            noteRepository.createNoteFromAudio(file, "")
+            noteRepository.createNoteFromAudio(file, text)
             file.delete()
         }
     }

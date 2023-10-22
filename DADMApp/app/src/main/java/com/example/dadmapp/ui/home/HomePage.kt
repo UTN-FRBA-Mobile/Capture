@@ -36,6 +36,7 @@ import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.google.mlkit.vision.common.InputImage
+
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

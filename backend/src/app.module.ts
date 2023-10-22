@@ -20,7 +20,7 @@ import { join } from 'path';
     NoteModule,
     AuthModule,
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'imgs'),
+      rootPath: join(__dirname, '..', 'static'),
     }),
   ],
   controllers: [],
