@@ -55,7 +55,7 @@ class SignUpViewModel(private val userRepository: UserRepository) : ViewModel() 
                 _registered.value = false
             } catch (e: Exception) {
                 // Handle other general exceptions
-                Log.d("ERR", "There was an Exception ${e.message}")
+                Log.e("ERR", "There was an Exception ${e.message}")
                 e.printStackTrace()
                 registeredError = "Unexpected error occurred. Please try again."
                 _registered.value = false
