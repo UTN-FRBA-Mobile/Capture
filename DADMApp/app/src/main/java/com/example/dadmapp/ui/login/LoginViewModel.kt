@@ -13,6 +13,7 @@ import com.example.dadmapp.data.UserRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.exceptions.LoginException
 import retrofit2.HttpException
 
 class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
@@ -35,9 +36,12 @@ class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
             try {
                 userRepository.login(username, password)
                 logged = true
-            } catch (e: HttpException){
+            } catch (e: LoginException) {
+                Log.d("ERR", "There was a LoginException: ${e.message}")
+                loginError = e.message
+            } catch (e: HttpException) {
                 Log.d("ERR", "There was an HttpException ${e.code()}")
-                loginError = when(e.code()) {
+                loginError = when (e.code()) {
                     401 -> "Invalid credentials"
                     else -> "Something went wrong"
                 }
@@ -45,9 +49,9 @@ class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
                 Log.d("ERR", "There was an Exception ${e.message}")
                 loginError = "Something went wrong."
             }
-
         }
     }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

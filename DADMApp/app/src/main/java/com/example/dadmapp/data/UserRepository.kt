@@ -1,20 +1,23 @@
 package com.example.dadmapp.data
 
-import android.provider.ContactsContract.CommonDataKinds.Note
 import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.example.dadmapp.exceptions.LoginException
+import com.example.dadmapp.exceptions.SignUpException
 import com.example.dadmapp.model.login.LoginRequest
+import com.example.dadmapp.model.singup.SignUpResponse
+import com.example.dadmapp.model.singup.SignupRequest
 import com.example.dadmapp.network.AuthApiService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
-import kotlin.Exception
 
 interface UserRepository {
     suspend fun login(username: String, password: String)
+    suspend fun signUp(username: String, password: String)
     suspend fun hasExistingToken(): Boolean
 }
 
@@ -27,11 +30,31 @@ class NetworkUserRepository(
 
     override suspend fun login(username: String, password: String) {
         val body = LoginRequest(username, password)
-        val res = authApiService.login(body)
-        tokenInterceptor.setToken(res.token)
+        try {
+            val res = authApiService.login(body)
+            tokenInterceptor.setToken(res.token)
+            dataStore.edit { settings ->
+                settings[TOKEN_KEY] = res.token
+            }
+        } catch (e: HttpException) {
+            when (e.code()) {
+                401 -> throw LoginException("Invalid credentials.")
+                403 -> throw LoginException("Account not activated.")
+                else -> throw LoginException("Something went wrong during login.")
+            }
+        }
+    }
 
-        dataStore.edit { settings ->
-            settings[TOKEN_KEY] = res.token
+    override suspend fun signUp(username: String, password: String) {
+        val body = SignupRequest(username, password)
+        try {
+            authApiService.signUp(body)
+        } catch (e: HttpException) {
+            when (e.code()) {
+                400 -> throw SignUpException("Username already exists.")
+                500 -> throw SignUpException("Server error during signup.")
+                else -> throw SignUpException("Something went wrong during signup.")
+            }
         }
     }
 
