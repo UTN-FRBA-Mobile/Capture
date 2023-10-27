@@ -10,6 +10,7 @@ import com.example.dadmapp.model.login.LoginRequest
 import com.example.dadmapp.network.AuthApiService
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import retrofit2.HttpException
 import kotlin.Exception
 
 interface UserRepository {
@@ -26,17 +27,14 @@ class NetworkUserRepository(
 
     override suspend fun login(username: String, password: String) {
         val body = LoginRequest(username, password)
-        try {
-            val res = authApiService.login(body)
-            tokenInterceptor.setToken(res.token)
+        val res = authApiService.login(body)
+        tokenInterceptor.setToken(res.token)
 
-            dataStore.edit { settings ->
-                settings[TOKEN_KEY] = res.token
-            }
-        } catch (e: Exception) {
-            e.message?.let { Log.d("ERR", it) }
+        dataStore.edit { settings ->
+            settings[TOKEN_KEY] = res.token
         }
     }
+
 
     override suspend fun hasExistingToken(): Boolean {
         val token = dataStore.data.map {
