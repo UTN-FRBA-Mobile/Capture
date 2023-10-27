@@ -24,7 +24,8 @@ fun CustomTextField(
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
-    isPassword : Boolean = false
+    isPassword: Boolean = false,
+    singleLine: Boolean = true
 ) {
     TextField(
         value = value,
@@ -41,7 +42,10 @@ fun CustomTextField(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
-        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(keyboardType = KeyboardType.Text),
-        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None
-    )
+        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
+            keyboardType = KeyboardType.Text
+        ),
+        visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
+        singleLine = singleLine,
+        )
 }

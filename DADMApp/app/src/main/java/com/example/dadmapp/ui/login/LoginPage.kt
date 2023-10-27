@@ -25,7 +25,8 @@ import com.example.dadmapp.ui.components.CustomTextField
 
 @Composable
 fun LoginPage(
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit
 ) {
     val viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 
@@ -42,6 +43,9 @@ fun LoginPage(
     var password by remember {
         mutableStateOf("")
     }
+
+    val allFieldsFilled = username.isNotBlank() && password.isNotBlank()
+
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -64,12 +68,12 @@ fun LoginPage(
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            CustomButton(label = "Iniciar sesion", onClick = { viewModel.login(username, password) })
+            CustomButton(label = "Log in", onClick = { viewModel.login(username, password) }, enabled = allFieldsFilled)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "o registrarse",
+                text = "or sign up!",
                 color = Color.White,
-                modifier = Modifier.clickable { /*onNavigateToRegister() */}
+                modifier = Modifier.clickable { onNavigateToRegister() }
             )
         }
     }
