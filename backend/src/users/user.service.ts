@@ -14,7 +14,7 @@ export class UserService {
     return this.userModel.create({ ...newUserDto });
   }
 
-  async findByUsername(username: string) {
+  async findByUsername(username: string): Promise<User | undefined> {
     return this.userModel.findByPk(username);
   }
 }

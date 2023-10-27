@@ -31,4 +31,8 @@ export class AuthService {
       token: this.jwtService.sign(payload),
     };
   }
+
+  async userExists(username: string) {
+    return Boolean(await this.userService.findByUsername(username));
+  }
 }

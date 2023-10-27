@@ -9,6 +9,7 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/localAuth.guard';
 import { JwtAuthGuard } from './guards/jwtAuth.guard';
 import { User } from '../common/decorators/user.decorator';
+import { JwtPayload } from './interfaces/jwtPayload.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -22,8 +23,8 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Post('valid')
-  valid(@User() user) {
-    if (!user) {
+  async valid(@User() user: JwtPayload | undefined) {
+    if (!user || !(await this.authService.userExists(user.username))) {
       throw new UnauthorizedException();
     }
   }

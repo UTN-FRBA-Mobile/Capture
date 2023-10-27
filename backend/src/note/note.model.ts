@@ -21,4 +21,8 @@ export class Note extends Model {
   @AllowNull
   @Column
   imageName: string;
+
+  @AllowNull
+  @Column
+  audioName: string;
 }

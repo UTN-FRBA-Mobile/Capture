@@ -41,6 +41,7 @@ fun NotePreview(
     content: String,
     date: String,
     imageName: String?,
+    audioName: String?,
     onNoteClick: () -> Unit
 ) {
     val radius = 5.dp
@@ -64,6 +65,13 @@ fun NotePreview(
                         .fillMaxWidth()
                         .height(250.dp)
                         .clip(RoundedCornerShape(topEnd = radius, topStart = radius))
+                )
+            }
+        }
+        if (audioName != null) {
+            Row {
+                AudioPlayer(
+                    audioName = audioName
                 )
             }
         }

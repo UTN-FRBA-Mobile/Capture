@@ -9,6 +9,7 @@ data class Note (
     val title: String? = null,
     val content: String? = null,
     val imageName: String? = null,
+    val audioName: String? = null,
     val createdAt: String,
     val updatedAt: String
 )

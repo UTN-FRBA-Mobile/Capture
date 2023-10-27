@@ -122,6 +122,7 @@ fun HomePage(
                         content = note.content ?: "",
                         date = note.createdAt,
                         imageName = note.imageName,
+                        audioName = note.audioName,
                         onNoteClick = { onNoteClick(note.id.toString()) }
                     )
                 }

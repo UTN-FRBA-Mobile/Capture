@@ -73,6 +73,7 @@ export class NoteController {
     return this.noteService.create(jwtUser.username, {
       title: '',
       content: body.text,
+      audioName: file.filename,
     });
   }
 

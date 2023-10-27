@@ -14,3 +14,11 @@ fun formattedTimeStr(date: String): String {
 
     return DateTimeFormatter.ofPattern("HH:mm").format(ldt)
 }
+
+fun msToMinutesAndSeconds(ms: Int): String {
+    val minutes = ms.floorDiv(60000)
+    val secondsInMs = ms - minutes * 60000
+    val seconds = secondsInMs.floorDiv(1000)
+
+    return minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
+}
