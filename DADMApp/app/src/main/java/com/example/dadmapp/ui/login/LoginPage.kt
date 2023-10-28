@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,7 +27,8 @@ import com.example.dadmapp.ui.components.CustomTextField
 
 @Composable
 fun LoginPage(
-    onLogin: () -> Unit
+    onLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit
 ) {
     val viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
 
@@ -41,6 +44,21 @@ fun LoginPage(
 
     var password by remember {
         mutableStateOf("")
+    }
+
+    val allFieldsFilled = username.isNotBlank() && password.isNotBlank()
+
+    if (viewModel.loginError != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.loginError = null },
+            title = { Text(text = "Login Error") },
+            text = { Text(text = viewModel.loginError ?: "") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.loginError = null }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 
     Column(
@@ -64,12 +82,12 @@ fun LoginPage(
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            CustomButton(label = "Iniciar sesion", onClick = { viewModel.login(username, password) })
+            CustomButton(label = "Log in", onClick = { viewModel.login(username, password) }, enabled = allFieldsFilled)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "o registrarse",
+                text = "or sign up!",
                 color = Color.White,
-                modifier = Modifier.clickable { /*onNavigateToRegister() */}
+                modifier = Modifier.clickable { onNavigateToRegister() }
             )
         }
     }

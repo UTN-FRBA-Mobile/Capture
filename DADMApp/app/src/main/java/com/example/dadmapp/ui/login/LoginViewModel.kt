@@ -1,5 +1,6 @@
 package com.example.dadmapp.ui.login
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,9 +13,12 @@ import com.example.dadmapp.data.UserRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.exceptions.LoginException
+import retrofit2.HttpException
 
 class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
     var logged by mutableStateOf(false)
+    var loginError by mutableStateOf<String?>(null)
 
     init {
         isLogged()
@@ -29,10 +33,25 @@ class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
 
     fun login(username: String, password: String) {
         viewModelScope.launch {
-            userRepository.login(username, password)
-            logged = true
+            try {
+                userRepository.login(username, password)
+                logged = true
+            } catch (e: LoginException) {
+                Log.d("ERR", "There was a LoginException: ${e.message}")
+                loginError = e.message
+            } catch (e: HttpException) {
+                Log.d("ERR", "There was an HttpException ${e.code()}")
+                loginError = when (e.code()) {
+                    401 -> "Invalid credentials"
+                    else -> "Something went wrong"
+                }
+            } catch (e: Exception) {
+                Log.d("ERR", "There was an Exception ${e.message}")
+                loginError = "Something went wrong."
+            }
         }
     }
+
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

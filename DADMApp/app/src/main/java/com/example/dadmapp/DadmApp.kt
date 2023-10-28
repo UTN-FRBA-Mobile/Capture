@@ -18,11 +18,13 @@ import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.login.LoginPage
 import com.example.dadmapp.ui.note.NotePage
 import com.example.dadmapp.ui.recordAudio.RecordAudioPage
+import com.example.dadmapp.ui.signup.SignUpPage
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
     Login("Login"),
     Home("Home"),
+    SignUp("SignUp")
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -33,8 +35,7 @@ fun DadmApp(
 ) {
     Scaffold(
         containerColor = BgDark
-    ) {
-        _ ->
+    ) { _ ->
 
         NavHost(
             navController = navController,
@@ -43,9 +44,18 @@ fun DadmApp(
                 .fillMaxSize()
         ) {
             composable(RouteState.Login.title) {
-                LoginPage(onLogin = { navController.navigate(RouteState.Home.title) })
+                LoginPage(
+                    onLogin = { navController.navigate(RouteState.Home.title) },
+                    onNavigateToRegister = { navController.navigate(RouteState.SignUp.title) }
+                )
             }
-            
+
+            composable(RouteState.SignUp.title) {
+                SignUpPage(onSingUp = {
+                    navController.navigate(RouteState.Home.title)
+                })
+            }
+
             composable(RouteState.Home.title) {
                 val vm = viewModel<HomePageViewModel>(factory = HomePageViewModel.Factory)
                 HomePage(
