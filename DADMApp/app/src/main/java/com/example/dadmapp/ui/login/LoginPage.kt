@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -48,7 +51,12 @@ fun LoginPage(
 
     val allFieldsFilled = username.isNotBlank() && password.isNotBlank()
 
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
+
     if (viewModel.loginError != null) {
+        isLoading = false
         AlertDialog(
             onDismissRequest = { viewModel.loginError = null },
             title = { Text(text = "Login Error") },
@@ -74,7 +82,12 @@ fun LoginPage(
         Row(
             modifier = Modifier.padding(10.dp)
         ) {
-            CustomTextField(label = "Password", value = password, onValueChange = { password = it }, isPassword = true)
+            CustomTextField(
+                label = "Password",
+                value = password,
+                onValueChange = { password = it },
+                isPassword = true
+            )
         }
         Row(
             modifier = Modifier.padding(2.dp),
@@ -82,7 +95,10 @@ fun LoginPage(
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            CustomButton(label = "Log in", onClick = { viewModel.login(username, password) }, enabled = allFieldsFilled)
+            CustomButton(label = "Log in", onClick = {
+                isLoading = true
+                viewModel.login(username, password)
+            }, enabled = allFieldsFilled, showLoading = isLoading)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = "or sign up!",
