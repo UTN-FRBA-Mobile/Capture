@@ -77,7 +77,11 @@ fun NotePage(
 
     fun onBack() {
         coroutineScope.launch {
-            notePageViewModel.updateNote(noteId, titleVal, contentVal)
+            if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
+                notePageViewModel.deleteNote(noteId)
+            } else {
+                notePageViewModel.updateNote(noteId, titleVal, contentVal)
+            }
             onBackClick()
         }
     }
