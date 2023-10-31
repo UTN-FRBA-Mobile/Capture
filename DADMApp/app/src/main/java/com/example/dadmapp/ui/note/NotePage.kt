@@ -15,11 +15,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -27,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,6 +71,8 @@ fun NotePage(
         mutableStateOf(note.content)
     }
 
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
     fun onDeleteNote() {
         coroutineScope.launch {
             notePageViewModel.deleteNote(noteId)
@@ -94,24 +99,33 @@ fun NotePage(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 IconButton(onClick = { onBack() }) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back icon", tint = Color.White)
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        contentDescription = "Back icon",
+                        tint = Color.White
+                    )
                 }
-                IconButton(onClick = { onDeleteNote() }) {
-                    Icon(Icons.Filled.Delete, contentDescription = "Delete note", tint = Color.White)
+                IconButton(onClick = { showDeleteDialog = true }) {
+                    Icon(
+                        Icons.Filled.Delete,
+                        contentDescription = "Delete note",
+                        tint = Color.White
+                    )
                 }
             }
         },
         bottomBar = {
             Text(
-                text = "Editado por ultima vez el " + formattedDateStr(note.updatedAt) + " a las " + formattedTimeStr(note.updatedAt),
+                text = "Editado por ultima vez el " + formattedDateStr(note.updatedAt) + " a las " + formattedTimeStr(
+                    note.updatedAt
+                ),
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
                 fontSize = 12.sp
             )
         }
-    ) {
-        paddingValues ->
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .padding(
@@ -143,6 +157,11 @@ fun NotePage(
             Row {
                 ContentTextField(value = contentVal ?: "", onContentChange = { contentVal = it })
             }
+            DeleteAlertDialog(
+                show = showDeleteDialog,
+                onDismiss = { showDeleteDialog = false },
+                onConfirm = { onDeleteNote() }
+            )
         }
     }
 }
@@ -191,4 +210,29 @@ fun ContentTextField(value: String, onContentChange: (newContent: String) -> Uni
             .border(0.dp, Color.Transparent)
             .fillMaxWidth()
     )
+}
+
+@Composable
+fun DeleteAlertDialog(
+    show: Boolean,
+    onDismiss: () -> Unit,
+    onConfirm: () -> Unit
+) {
+    if (show) {
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            confirmButton = {
+                TextButton(onClick = { onConfirm() }) {
+                    Text(text = "Confirmar")
+                }
+
+            },
+            dismissButton = {
+                TextButton(onClick = { onDismiss() }) {
+                    Text(text = "Cancelar")
+                }
+            },
+            title = { Text(text = "¿Está seguro que desea eliminar la nota?") }
+        )
+    }
 }

@@ -1,9 +1,7 @@
 package com.example.dadmapp.data
 
-import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.network.AuthApiService
 import com.example.dadmapp.network.NoteApiService

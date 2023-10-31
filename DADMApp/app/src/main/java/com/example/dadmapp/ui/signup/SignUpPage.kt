@@ -33,11 +33,15 @@ fun SignUpPage(
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
+    var isLoading by remember {
+        mutableStateOf(false)
+    }
 
     val allFieldsFilled = username.isNotBlank() && password.isNotBlank() && confirmPassword.isNotBlank()
 
     // Show an alert dialog if there is a registration error
     if (viewModel.registeredError != null) {
+        isLoading = false
         AlertDialog(
             onDismissRequest = { viewModel.registeredError = null },
             title = { Text(text = "Registration Error") },
@@ -88,6 +92,7 @@ fun SignUpPage(
 
         CustomButton(label = "Register", onClick = {
             viewModel.register(username, password, confirmPassword)
-        }, enabled = allFieldsFilled)
+            isLoading = true
+        }, enabled = allFieldsFilled, showLoading = isLoading)
     }
 }
