@@ -30,7 +30,8 @@ import java.util.Locale
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun RecordAudioPage(
-    recordPageViewModel: RecordPageViewModel = viewModel(factory = RecordPageViewModel.Factory)
+    recordPageViewModel: RecordPageViewModel = viewModel(factory = RecordPageViewModel.Factory),
+    onCreatedNote: (noteId: String) -> Unit
 ) {
     val ctx = LocalContext.current
     var intent: Intent? = null
@@ -46,38 +47,12 @@ fun RecordAudioPage(
     }
 
     val l = rememberLauncherForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) {
-        val uri = it.data?.data
-        val text = it.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.first()
-
-        uri?.let {
-            u ->
-
-            text?.let {
-                t ->
-
-                val contentResolver = ctx.contentResolver
-                val inputStream = contentResolver.openInputStream(u) ?: return@let
-
-                val f = File(ctx.cacheDir, "audio.mp3")
-
-                val outputStream = FileOutputStream(f)
-
-                var read = -1
-                do {
-                    read = inputStream.read()
-
-                    if (read != -1) {
-                        outputStream.write(read)
-                    }
-                } while (read != -1)
-
-                inputStream.close()
-                outputStream.close()
-
-                recordPageViewModel.onNewNoteFromAudio(f, t)
-            }
-        }
-
+        recordPageViewModel.processRecognizerIntentResult(
+            it,
+            ctx.contentResolver,
+            ctx.cacheDir,
+            onCreatedNote
+        )
     }
 
     Column {
@@ -90,7 +65,7 @@ fun RecordAudioPage(
                     RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH
                 )
 
-                it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                it.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "es-ES")
 
                 it.putExtra("android.speech.extra.GET_AUDIO", true)
                 it.putExtra("android.speech.extra.GET_AUDIO_FORMAT", "audio/AMR")
