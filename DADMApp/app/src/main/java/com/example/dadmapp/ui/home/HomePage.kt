@@ -118,7 +118,7 @@ fun HomePage(
                 .verticalScroll(rememberScrollState())
         ) {
             homePageViewModel.notes?.collectAsState()?.value?.map { note ->
-                Row(modifier = Modifier.padding(bottom = 15.dp)) {
+                Row(modifier = Modifier.padding(bottom = 20.dp)) {
                     NotePreview(
                         title = note.title,
                         content = note.content ?: "",
