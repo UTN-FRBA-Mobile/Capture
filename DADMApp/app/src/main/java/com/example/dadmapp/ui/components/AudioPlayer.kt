@@ -6,6 +6,7 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,14 +32,18 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.dadmapp.AUDIO_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.R
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.LightRed
 import com.example.dadmapp.utils.msToMinutesAndSeconds
@@ -64,41 +70,51 @@ fun AudioPlayer(
     }
 
     val ctx = LocalContext.current
-    val url = "$LOCALHOST_URL/$AUDIO_PATH/$audioName"
+    val url = remember { "$LOCALHOST_URL/$AUDIO_PATH/$audioName" }
 
-    val mediaPlayer = MediaPlayer()
-    mediaPlayer.setAudioAttributes(
-        AudioAttributes
-            .Builder()
-            .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-            .build()
-    )
-    mediaPlayer.setDataSource(ctx, Uri.parse(url))
-    mediaPlayer.setOnPreparedListener {
-        mp ->
+    val mediaPlayer = remember { MediaPlayer() }
+
+    val progressFactor: Long = remember { 100 }
+
+    // Necesitamos esto?
+    if (!loaded) {
+        mediaPlayer.setAudioAttributes(
+            AudioAttributes
+                .Builder()
+                .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                .build()
+        )
+        mediaPlayer.setDataSource(ctx, Uri.parse(url))
+        mediaPlayer.setOnPreparedListener {
+                mp ->
             loaded = true
             duration = mp.duration
-    }
-    mediaPlayer.prepareAsync()
+        }
+        mediaPlayer.prepareAsync()
 
-    mediaPlayer.setOnCompletionListener {
-        playing = false
-    }
+        mediaPlayer.setOnCompletionListener {
+            playing = false
+            currentValue = duration
+        }
 
-    if (!loaded) {
         return
     }
 
     if (playing) {
         LaunchedEffect(Unit) {
-            while (true) {
-                delay(1000)
-                val newVal = currentValue + 1000
+            if (currentValue == duration) {
+                currentValue = 0
+            }
+
+            while (playing) {
+                delay(progressFactor)
+
+                val newVal = currentValue + progressFactor
 
                 if (newVal > duration) {
                     currentValue = duration
                 } else {
-                    currentValue += 1000
+                    currentValue += progressFactor.toInt()
                 }
             }
         }
@@ -113,41 +129,62 @@ fun AudioPlayer(
                 end = 10.dp
             )
             .background(LightRed, shape = RoundedCornerShape(20.dp))
-            .padding(5.dp)
+            .padding(5.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        if (playing) {
-            IconButton(
-                onClick = {
-                    playing = false
-                    mediaPlayer.stop()
-                },
-                icon = Icons.Filled.Warning,
-                contentDescription = "Stop audio"
-            )
-        } else {
-            IconButton(
-                onClick = {
-                    playing = true
-                    mediaPlayer.start()
-                },
-                icon = Icons.Filled.PlayArrow,
-                contentDescription = "Play audio"
-            )
-        }
-        
-        if (playing) {
-            Text(text = msToMinutesAndSeconds(currentValue))
-        } else {
-            Text(text = msToMinutesAndSeconds(duration))
-        }
+        PlayButton(
+            playing,
+            {
+                playing = true
+                mediaPlayer.start()
+            },
+            {
+                mediaPlayer.pause()
+                playing = false
+            }
+        )
+        LinearProgressIndicator(
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 7.5.dp),
+            progress = (currentValue.toFloat() / duration.toFloat()),
+            trackColor = Color.White,
+            color = AccentRed1
+        )
+        Text(
+            msToMinutesAndSeconds(if (playing) currentValue else duration),
+            Modifier.padding(end = 7.5.dp),
+            color = Color.White
+        )
+    }
+}
+
+@Composable
+fun PlayButton(
+    playing: Boolean,
+    onPlayStart: () -> Unit,
+    onPlayStop: () -> Unit
+) {
+    if (playing) {
+        IconButton(
+            onClick = { onPlayStop() },
+            contentDescription = "Stop audio",
+            painterResource = painterResource(id = R.drawable.pause_icon)
+        )
+    } else {
+        IconButton(
+            onClick = { onPlayStart() },
+            icon = Icons.Filled.PlayArrow,
+            contentDescription = "Play audio"
+        )
     }
 }
 
 @Composable
 fun IconButton(
     onClick: () -> Unit,
+    contentDescription: String,
     icon: ImageVector,
-    contentDescription: String
 ) {
     val size = 25.dp
 
@@ -166,6 +203,33 @@ fun IconButton(
             icon,
             contentDescription = contentDescription,
             modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun IconButton(
+    onClick: () -> Unit,
+    contentDescription: String,
+    painterResource: Painter
+) {
+    val size = 25.dp
+
+    Button(
+        onClick = { onClick() },
+        modifier = Modifier
+            .width(size)
+            .height(size),
+        shape = CircleShape,
+        colors = ButtonDefaults.buttonColors(
+            containerColor = AccentRed1
+        ),
+        contentPadding = PaddingValues(5.dp)
+    ) {
+        Icon(
+            contentDescription = contentDescription,
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource
         )
     }
 }

@@ -30,8 +30,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
@@ -75,7 +77,7 @@ fun HomePage(
                         modifier = Modifier.background(LightRed)
                     ) {
                         DropdownOption(
-                            "Create",
+                            "Write",
                             { homePageViewModel.onNewNote() },
                             Icons.Filled.Create,
                             "Create note with text"
@@ -83,14 +85,14 @@ fun HomePage(
                         DropdownOption(
                             "From image",
                             { launcher.launch("image/*") },
-                            Icons.Filled.Add,
-                            "Create note with text"
+                            painterResource(id = R.drawable.camera),
+                            "Create note from image"
                         )
                         DropdownOption(
-                            "From audio",
+                            "From speech",
                             { onRecordAudio() },
-                            Icons.Filled.Call,
-                            "Create note from audio"
+                            painterResource(id = R.drawable.microphone),
+                            "Create note from speech",
                         )
                     }
                 }
@@ -116,7 +118,7 @@ fun HomePage(
                 .verticalScroll(rememberScrollState())
         ) {
             homePageViewModel.notes?.collectAsState()?.value?.map { note ->
-                Row(modifier = Modifier.padding(bottom = 15.dp)) {
+                Row(modifier = Modifier.padding(bottom = 20.dp)) {
                     NotePreview(
                         title = note.title,
                         content = note.content ?: "",
