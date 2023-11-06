@@ -37,6 +37,7 @@ class NetworkNoteRepository(
         }
 
         Log.d("INFO", "Notes not loaded. Loading again")
+
         val newNotes = noteApiService.loadNotes()
         notes.update { newNotes }
         notesLoaded = true

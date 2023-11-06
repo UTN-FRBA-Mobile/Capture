@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.dadmapp.ui.applicationOpened.ApplicationOpened
 import com.example.dadmapp.ui.home.HomePage
 import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.login.LoginPage
@@ -24,6 +25,7 @@ import com.example.dadmapp.ui.signup.SignUpPage
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
+    ApplicationOpened("ApplicationOpened"),
     Login("Login"),
     Home("Home"),
     SignUp("SignUp")
@@ -42,10 +44,17 @@ fun DadmApp(
 
         NavHost(
             navController = navController,
-            startDestination = RouteState.Login.title,
+            startDestination = RouteState.ApplicationOpened.title,
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            composable(RouteState.ApplicationOpened.title) {
+                ApplicationOpened(
+                    onLogin = { navController.navigate(RouteState.Home.title) },
+                    onFailure = { navController.navigate(RouteState.Login.title) }
+                )
+            }
+
             composable(RouteState.Login.title) {
                 LoginPage(
                     onLogin = { navController.navigate(RouteState.Home.title) },
