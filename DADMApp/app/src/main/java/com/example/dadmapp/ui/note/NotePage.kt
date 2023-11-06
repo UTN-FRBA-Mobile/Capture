@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -46,10 +49,12 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.ui.components.AudioPlayer
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.example.dadmapp.utils.formattedDateStr
 import com.example.dadmapp.utils.formattedTimeStr
+import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -69,6 +74,10 @@ fun NotePage(
 
     var contentVal by remember {
         mutableStateOf(note.content)
+    }
+
+    var editMode by remember {
+        mutableStateOf(false)
     }
 
     var showDeleteDialog by remember { mutableStateOf(false) }
@@ -105,12 +114,29 @@ fun NotePage(
                         tint = Color.White
                     )
                 }
-                IconButton(onClick = { showDeleteDialog = true }) {
-                    Icon(
-                        Icons.Filled.Delete,
-                        contentDescription = "Delete note",
-                        tint = Color.White
-                    )
+
+                Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = if (editMode) "Edit enabled" else "Edit disabled",
+                            color = if (editMode) Color.White else Color.Gray,
+                            fontSize = 12.sp
+                        )
+                        IconButton(onClick = { editMode = !editMode }) {
+                            Icon(
+                                if (editMode) Icons.Filled.Create else Icons.Outlined.Create,
+                                contentDescription = "Edit note",
+                                tint = if (editMode) Color.White else Color.Gray
+                            )
+                        }
+                    }
+                    IconButton(onClick = { showDeleteDialog = true }) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = "Delete note",
+                            tint = Color.White
+                        )
+                    }
                 }
             }
         },
@@ -151,12 +177,36 @@ fun NotePage(
                     )
                 }
             }
-            Row {
-                TitleTextField(value = titleVal ?: "", onTitleChange = { titleVal = it })
+
+            if (note.audioName != null) {
+                Row {
+                    AudioPlayer(note.audioName)
+                }
             }
+
             Row {
-                ContentTextField(value = contentVal ?: "", onContentChange = { contentVal = it })
+                TitleTextField(
+                    value = titleVal ?: "",
+                    onTitleChange = { titleVal = it },
+                    readOnly = !editMode
+                )
             }
+
+            if (editMode) {
+                Row {
+                    ContentTextField(value = contentVal ?: "", onContentChange = { contentVal = it })
+                }
+            } else {
+                Row {
+                    MarkdownText(
+                        markdown = contentVal ?: "",
+                        color = Color.White,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        fontSize = 16.sp
+                    )
+                }
+            }
+
             DeleteAlertDialog(
                 show = showDeleteDialog,
                 onDismiss = { showDeleteDialog = false },
@@ -168,7 +218,11 @@ fun NotePage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TitleTextField(value: String, onTitleChange: (newTitle: String) -> Unit) {
+fun TitleTextField(
+    value: String,
+    onTitleChange: (newTitle: String) -> Unit,
+    readOnly: Boolean = false
+) {
     val fontSize = 24.sp
 
     TextField(
@@ -185,7 +239,8 @@ fun TitleTextField(value: String, onTitleChange: (newTitle: String) -> Unit) {
             disabledIndicatorColor = Color.Transparent
         ),
         modifier = Modifier.border(0.dp, Color.Transparent),
-        textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = fontSize)
+        textStyle = TextStyle(fontWeight = FontWeight.Bold, fontSize = fontSize),
+        readOnly = readOnly
     )
 }
 

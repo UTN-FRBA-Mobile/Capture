@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,6 +26,7 @@ import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.utils.formattedDateStr
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 fun getText(text: String): String {
     val maxLength = 200
@@ -91,9 +93,15 @@ fun NotePreview(
                         CustomText(text = title, fontWeight = FontWeight.Bold, fontSize = 22.sp)
                     }
                 }
-                Row(modifier = Modifier
-                    .padding(vertical = 10.dp)) {
-                    CustomText(text = getText(content))
+                Row(
+                    modifier = Modifier.padding(vertical = 10.dp)
+                ) {
+                    MarkdownText(
+                        markdown = content,
+                        maxLines = 5,
+                        color = Color.White,
+                        fontSize = 16.sp
+                    )
                 }
                 Row {
                     CustomText(text = formattedDateStr(date), fontSize = 12.sp, color = Color.Gray)
