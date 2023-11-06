@@ -100,7 +100,8 @@ fun NotePreview(
                         markdown = content,
                         maxLines = 5,
                         color = Color.White,
-                        fontSize = 16.sp
+                        fontSize = 16.sp,
+                        onClick = { onNoteClick() }
                     )
                 }
                 Row {

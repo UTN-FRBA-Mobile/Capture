@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -72,6 +74,8 @@ fun HomePage(
 
     val btnSize = 45.dp
 
+    val notesState = homePageViewModel.notes?.collectAsState()
+
     Scaffold(
         containerColor = BgDark,
         floatingActionButton = {
@@ -107,7 +111,9 @@ fun HomePage(
                     shadowElevation = 10.dp,
                     color = AccentRed1,
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.width(btnSize).height(btnSize)
+                    modifier = Modifier
+                        .width(btnSize)
+                        .height(btnSize)
                 ) {
                     SmallFloatingActionButton(
                         onClick = { showOptions = !showOptions },
@@ -124,22 +130,24 @@ fun HomePage(
             }
         }
     ) {
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(10.dp)
-                .verticalScroll(rememberScrollState())
         ) {
-            homePageViewModel.notes?.collectAsState()?.value?.map { note ->
-                Row(modifier = Modifier.padding(bottom = 20.dp)) {
-                    NotePreview(
-                        title = note.title,
-                        content = note.content ?: "",
-                        date = note.createdAt,
-                        imageName = note.imageName,
-                        audioName = note.audioName,
-                        onNoteClick = { onNoteClick(note.id.toString()) }
-                    )
+            items(notesState?.value?.size ?: 0) { idx ->
+                    val note = notesState?.value?.get(idx)
+                if (note != null) {
+                    Row(modifier = Modifier.padding(bottom = 20.dp)) {
+                        NotePreview(
+                            title = note.title,
+                            content = note.content ?: "",
+                            date = note.createdAt,
+                            imageName = note.imageName,
+                            audioName = note.audioName,
+                            onNoteClick = { onNoteClick(note.id.toString()) }
+                        )
+                    }
                 }
             }
         }
