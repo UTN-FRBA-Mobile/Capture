@@ -55,7 +55,7 @@ class NetworkNoteRepository(
 
     override suspend fun createNote(): Note {
         val note = noteApiService.createNote()
-        notes.update { notes -> notes + note }
+        notes.update { notes -> listOf(note) +  notes}
         return note
     }
 

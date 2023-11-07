@@ -20,6 +20,7 @@ export class NoteService {
       where: {
         username,
       },
+      order: [['createdAt', "DESC"]]
     });
   }
 

@@ -1,6 +1,7 @@
 package com.example.dadmapp.ui.home
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.VectorDrawable
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -29,9 +31,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
@@ -89,7 +95,7 @@ fun HomePage(
                         DropdownOption(
                             "From audio",
                             { onRecordAudio() },
-                            Icons.Filled.Call,
+                            Icons.Filled.Phone,
                             "Create note from audio"
                         )
                     }
