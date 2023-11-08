@@ -1,6 +1,5 @@
 package com.example.dadmapp.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -9,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +24,9 @@ import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.ui.theme.AccentRed1
+import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.utils.formattedDateStr
+import dev.jeziellago.compose.markdowntext.MarkdownText
 
 fun getText(text: String): String {
     val maxLength = 200
@@ -46,51 +48,65 @@ fun NotePreview(
 ) {
     val radius = 5.dp
 
-    Column(
+    Surface(
+        color = BgDark,
         modifier = Modifier
-            .border(width = 2.dp, color = AccentRed1, shape = RoundedCornerShape(radius))
-            .fillMaxWidth()
-            .clickable { onNoteClick() }
+            .clickable { onNoteClick() },
+        shape = RoundedCornerShape(radius),
+        shadowElevation = 10.dp
     ) {
-        if (imageName != null) {
-            Row {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("$LOCALHOST_URL/$IMGS_PATH/$imageName")
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Image of the note",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(250.dp)
-                        .clip(RoundedCornerShape(topEnd = radius, topStart = radius))
-                )
-            }
-        }
-        if (audioName != null) {
-            Row {
-                AudioPlayer(
-                    audioName = audioName
-                )
-            }
-        }
         Column(
             modifier = Modifier
+                .border(width = 1.dp, color = AccentRed1, shape = RoundedCornerShape(radius))
                 .fillMaxWidth()
-                .padding(10.dp)
         ) {
-            if (title != null) {
+            if (imageName != null) {
                 Row {
-                    CustomText(text = title, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data("$LOCALHOST_URL/$IMGS_PATH/$imageName")
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Image of the note",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(250.dp)
+                            .clip(RoundedCornerShape(topEnd = radius, topStart = radius))
+                    )
                 }
             }
-            Row(modifier = Modifier
-                .padding(vertical = 10.dp)) {
-                CustomText(text = getText(content))
+            if (audioName != null) {
+                Row {
+                    AudioPlayer(
+                        audioName = audioName
+                    )
+                }
             }
-            Row {
-                CustomText(text = formattedDateStr(date), fontSize = 14.sp)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+            ) {
+                if (title != null) {
+                    Row {
+                        CustomText(text = title, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                    }
+                }
+                Row(
+                    modifier = Modifier.padding(vertical = 10.dp)
+                ) {
+                    MarkdownText(
+                        markdown = content,
+                        maxLines = 5,
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        onClick = { onNoteClick() }
+                    )
+                }
+                Row {
+                    CustomText(text = formattedDateStr(date), fontSize = 12.sp, color = Color.Gray)
+                }
             }
         }
     }

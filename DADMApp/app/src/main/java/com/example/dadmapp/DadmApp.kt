@@ -1,6 +1,8 @@
 package com.example.dadmapp
 
 import android.annotation.SuppressLint
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -13,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.dadmapp.ui.applicationOpened.ApplicationOpened
 import com.example.dadmapp.ui.home.HomePage
 import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.login.LoginPage
@@ -22,11 +25,13 @@ import com.example.dadmapp.ui.signup.SignUpPage
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
+    ApplicationOpened("ApplicationOpened"),
     Login("Login"),
     Home("Home"),
     SignUp("SignUp")
 }
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,10 +44,17 @@ fun DadmApp(
 
         NavHost(
             navController = navController,
-            startDestination = RouteState.Login.title,
+            startDestination = RouteState.ApplicationOpened.title,
             modifier = Modifier
                 .fillMaxSize()
         ) {
+            composable(RouteState.ApplicationOpened.title) {
+                ApplicationOpened(
+                    onLogin = { navController.navigate(RouteState.Home.title) },
+                    onFailure = { navController.navigate(RouteState.Login.title) }
+                )
+            }
+
             composable(RouteState.Login.title) {
                 LoginPage(
                     onLogin = { navController.navigate(RouteState.Home.title) },
@@ -78,7 +90,9 @@ fun DadmApp(
             }
 
             composable("recordAudio") {
-                RecordAudioPage()
+                RecordAudioPage(
+                    onCreatedNote = { noteId -> navController.navigate("note/$noteId") }
+                )
             }
         }
     }

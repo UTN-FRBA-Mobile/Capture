@@ -89,4 +89,7 @@ dependencies {
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+
+    implementation("com.github.jeziellago:compose-markdown:0.3.6")
+
 }
