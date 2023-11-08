@@ -105,7 +105,7 @@ fun HomePage(
                         IconButton(
                             onClick = { /*TODO*/ }
                         ) {
-                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "asd", tint = Color.White)
+                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Burger menu button", tint = Color.White)
                         }
                     }
                 },
@@ -114,14 +114,14 @@ fun HomePage(
                         IconButton(
                             onClick = { /*TODO*/ }
                         ) {
-                            Icon(imageVector = Icons.Filled.Search, contentDescription = "asd", tint = Color.LightGray)
+                            Icon(imageVector = Icons.Filled.Search, contentDescription = "Search button", tint = Color.LightGray)
                         }
                     }
                     Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
                         IconButton(
                             onClick = { /*TODO*/ }
                         ) {
-                            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "asd", tint = Color.White)
+                            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User button", tint = Color.White)
                         }
                     }
                 },
