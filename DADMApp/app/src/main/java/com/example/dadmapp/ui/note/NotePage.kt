@@ -14,8 +14,9 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Create
+
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -40,6 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -50,8 +52,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.R
 import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.components.AudioPlayer
+import com.example.dadmapp.ui.components.TagButton
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.example.dadmapp.utils.formattedDateStr
@@ -72,6 +76,10 @@ fun NotePage(
 
     var tags by remember { mutableStateOf(note.tags) }
     var newTag by rememberSaveable { mutableStateOf("") }
+
+    var selectedTag by remember { mutableStateOf<Tag?>(null) }
+    var showTagDialog by remember { mutableStateOf(false) }
+
 
     var showDialog by remember { mutableStateOf(false) }
 
@@ -96,6 +104,12 @@ fun NotePage(
         }
     }
 
+    fun onTagClicked(tag: Tag) {
+        selectedTag = tag
+        showTagDialog = true
+    }
+
+
     fun onBack() {
         coroutineScope.launch {
             if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
@@ -106,10 +120,6 @@ fun NotePage(
             onBackClick()
         }
     }
-
-
-
-
 
     Scaffold(
         containerColor = BgDark,
@@ -136,36 +146,27 @@ fun NotePage(
                         .weight(1f) // This allows the Row to occupy as much space as available
                         .padding(horizontal = 2.dp), // Adjust as needed
                 ) {
-                    tags.forEach { tag ->
+
+                    if (tags.size < 3 && editMode) {
                         Button(
-                            onClick = { /* TODO: Implement tag click logic */ },
+                            onClick = { showDialog = true },
                             shape = RoundedCornerShape(50),
                             modifier = Modifier
-                                .height(24.dp) // Smaller height
-                                .padding(end = 4.dp), // Space between tags
+                                .height(24.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(end = 4.dp),
+
                             contentPadding = PaddingValues(
                                 horizontal = 8.dp,
                                 vertical = 0.dp
-                            ) // Adjust padding around the text
+                            ) // Less padding around the text
                         ) {
-                            Text(text = "#${tag.name}", fontSize = 12.sp) // Smaller text
+                            Text("Add Tag", fontSize = 12.sp)
                         }
                     }
-                }
 
-                if (tags.size < 3) {
-                    Button(
-                        onClick = { showDialog = true },
-                        shape = RoundedCornerShape(50),
-                        modifier = Modifier
-                            .height(24.dp) // Adjust the height as necessary
-                            .align(Alignment.CenterVertically),
-                        contentPadding = PaddingValues(
-                            horizontal = 8.dp,
-                            vertical = 0.dp
-                        ) // Less padding around the text
-                    ) {
-                        Text("Add Tag", fontSize = 12.sp)
+                    tags.forEach { tag ->
+                        TagButton(tag = tag, onClick = { tags -= tag }, showDeletable = editMode, enabled = editMode)
                     }
                 }
 
@@ -175,7 +176,7 @@ fun NotePage(
                 ) {
                     IconButton(onClick = { editMode = !editMode }) {
                         Icon(
-                            if (editMode) Icons.Filled.Create else Icons.Outlined.Create,
+                            if (editMode) painterResource(id = R.drawable.baseline_edit_24) else painterResource(id = R.drawable.baseline_edit_off_24),
                             contentDescription = "Edit note",
                             tint = if (editMode) Color.White else Color.Gray
                         )
@@ -261,6 +262,8 @@ fun NotePage(
                 }
             }
 
+
+
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
@@ -298,6 +301,8 @@ fun NotePage(
         }
     }
 }
+
+
 
 
 @OptIn(ExperimentalMaterial3Api::class)
