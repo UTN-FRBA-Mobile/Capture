@@ -3,6 +3,7 @@ package com.example.dadmapp.data
 import android.graphics.Bitmap
 import android.util.Log
 import com.example.dadmapp.model.note.Note
+import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.network.NoteApiService
 import com.example.dadmapp.network.body.UpdateNoteBody
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,7 @@ interface NoteRepository {
     suspend fun createNoteFromFile(image: Bitmap, imgText: String): Note
     suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
-    suspend fun updateNote(id: String, title: String?, content: String?, tags: List<String>)
+    suspend fun updateNote(id: String, title: String?, content: String?, tags: List<Tag>)
 }
 
 class NetworkNoteRepository(
@@ -115,11 +116,11 @@ class NetworkNoteRepository(
         id: String,
         title: String?,
         content: String?,
-        tags: List<String>
+        tags: List<Tag>
     ) {
         val bodyTitle = title ?: ""
         val bodyContent = content ?: ""
-        val body = UpdateNoteBody(bodyTitle, bodyContent, tags)
+        val body = UpdateNoteBody(bodyTitle, bodyContent, tags.map { t -> t.name })
         noteApiService.updateNote(id, body)
         notes.update { arr -> arr.map {
                 n ->

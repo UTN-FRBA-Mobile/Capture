@@ -7,6 +7,7 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.data.NoteRepository
 import com.example.dadmapp.model.note.Note
+import com.example.dadmapp.model.tag.Tag
 
 class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     suspend fun deleteNote(id: String) {
@@ -17,7 +18,7 @@ class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel()
         return noteRepository.getNoteById(id)
     }
 
-    suspend fun updateNote(noteId: String, title: String?, content: String?, tags: List<String>) {
+    suspend fun updateNote(noteId: String, title: String?, content: String?, tags: List<Tag>) {
         noteRepository.updateNote(noteId, title, content, tags)
     }
 

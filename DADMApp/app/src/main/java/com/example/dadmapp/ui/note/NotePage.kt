@@ -50,6 +50,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.components.AudioPlayer
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
@@ -147,7 +148,7 @@ fun NotePage(
                                 vertical = 0.dp
                             ) // Adjust padding around the text
                         ) {
-                            Text(text = "#$tag", fontSize = 12.sp) // Smaller text
+                            Text(text = "#${tag.name}", fontSize = 12.sp) // Smaller text
                         }
                     }
                 }
@@ -276,7 +277,7 @@ fun NotePage(
                         TextButton(
                             onClick = {
                                 if (newTag.isNotBlank()) {
-                                    tags = tags + newTag
+                                    tags = tags + Tag(name = newTag)
                                     newTag = ""
                                     showDialog = false
                                 }
