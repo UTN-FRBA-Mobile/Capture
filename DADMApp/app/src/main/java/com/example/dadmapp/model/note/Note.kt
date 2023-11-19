@@ -11,7 +11,7 @@ data class Note (
     val content: String? = null,
     val imageName: String? = null,
     val audioName: String? = null,
-    val tags: List<Tag>,
+    val tags: List<Tag> = emptyList(),
     val createdAt: String,
     val updatedAt: String
 )
