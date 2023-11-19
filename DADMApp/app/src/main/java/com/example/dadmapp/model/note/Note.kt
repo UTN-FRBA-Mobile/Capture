@@ -10,6 +10,7 @@ data class Note (
     val content: String? = null,
     val imageName: String? = null,
     val audioName: String? = null,
+    val tags: List<String> = listOf(),
     val createdAt: String,
     val updatedAt: String
 )

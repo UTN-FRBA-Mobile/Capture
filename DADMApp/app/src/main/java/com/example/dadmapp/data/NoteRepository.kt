@@ -21,7 +21,7 @@ interface NoteRepository {
     suspend fun createNoteFromFile(image: Bitmap, imgText: String): Note
     suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
-    suspend fun updateNote(id: String, title: String?, content: String?)
+    suspend fun updateNote(id: String, title: String?, content: String?, tags: List<String>)
 }
 
 class NetworkNoteRepository(
@@ -111,10 +111,15 @@ class NetworkNoteRepository(
         notes.update { notes -> notes.filter { n -> n.id.toString() != id } }
     }
 
-    override suspend fun updateNote(id: String, title: String?, content: String?) {
+    override suspend fun updateNote(
+        id: String,
+        title: String?,
+        content: String?,
+        tags: List<String>
+    ) {
         val bodyTitle = title ?: ""
         val bodyContent = content ?: ""
-        val body = UpdateNoteBody(bodyTitle, bodyContent)
+        val body = UpdateNoteBody(bodyTitle, bodyContent, tags)
         noteApiService.updateNote(id, body)
         notes.update { arr -> arr.map {
                 n ->
@@ -122,6 +127,7 @@ class NetworkNoteRepository(
                     n.copy(
                         title = bodyTitle,
                         content = bodyContent,
+                        tags = tags,
                         updatedAt = Instant.now().toString()
                     )
                 } else {

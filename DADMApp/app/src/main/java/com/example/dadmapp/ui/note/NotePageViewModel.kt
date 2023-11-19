@@ -17,8 +17,8 @@ class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel()
         return noteRepository.getNoteById(id)
     }
 
-    suspend fun updateNote(noteId: String, title: String?, content: String?) {
-        noteRepository.updateNote(noteId, title, content)
+    suspend fun updateNote(noteId: String, title: String?, content: String?, tags: List<String>) {
+        noteRepository.updateNote(noteId, title, content, tags)
     }
 
     companion object {
