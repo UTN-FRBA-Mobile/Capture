@@ -37,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -44,9 +45,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -91,49 +94,7 @@ fun HomePage(
     Scaffold(
         containerColor = BgDark,
         topBar = {
-            TopAppBar(
-                title = {
-                    TextButton(onClick = {}) {
-                        Text("Buscar por título", color = Color.White)
-                    }
-                },
-                navigationIcon = {
-                    Column(
-                        modifier = Modifier.fillMaxHeight(),
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        IconButton(
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Menu, contentDescription = "Burger menu button", tint = Color.White)
-                        }
-                    }
-                },
-                actions = {
-                    Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                        IconButton(
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(imageVector = Icons.Filled.Search, contentDescription = "Search button", tint = Color.LightGray)
-                        }
-                    }
-                    Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                        IconButton(
-                            onClick = { /*TODO*/ }
-                        ) {
-                            Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "User button", tint = Color.White)
-                        }
-                    }
-                },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .requiredHeight(45.dp).clip(RoundedCornerShape(50.dp)),
-                colors = TopAppBarDefaults.smallTopAppBarColors(
-                    containerColor = AccentRed1,
-                    titleContentColor = BgDark
-                )
-            )
+            TopBar()
         },
         floatingActionButton = {
             Column {
@@ -210,4 +171,77 @@ fun HomePage(
             }
         }
     )
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar() {
+    Row(
+        modifier = Modifier.background(BgDark)
+    ) {
+        TopAppBar(
+            title = {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    TextButton(onClick = {}) {
+                        Text("<Inserte logo aqui??>", color = Color.White)
+                    }
+                }
+            },
+            navigationIcon = {
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    IconButton(
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Menu,
+                            contentDescription = "Burger menu button",
+                            tint = Color.White
+                        )
+                    }
+                }
+            },
+            actions = {
+                Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                    IconButton(
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search button",
+                            tint = Color.LightGray
+                        )
+                    }
+                }
+                Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                    IconButton(
+                        onClick = { /*TODO*/ }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "User button",
+                            tint = Color.White
+                        )
+                    }
+                }
+            },
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+                .requiredHeight(45.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(BgDark),
+            colors = TopAppBarDefaults.smallTopAppBarColors(
+                containerColor = AccentRed1,
+                titleContentColor = BgDark
+            )
+        )
+    }
 }
