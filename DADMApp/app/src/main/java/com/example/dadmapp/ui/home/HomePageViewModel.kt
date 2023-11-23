@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.model.note.Note
+import com.example.dadmapp.model.tag.Tag
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -20,15 +21,23 @@ import kotlinx.coroutines.launch
 
 class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
+    var tags: List<Tag> = emptyList()
     var selectedNoteId by mutableStateOf<String?>(null)
 
     init {
         loadNotes()
+        loadTags()
     }
 
     private fun loadNotes() {
         viewModelScope.launch {
             notes = noteRepository.loadNotes()
+        }
+    }
+
+    private fun loadTags() {
+        viewModelScope.launch {
+            tags = noteRepository.loadNotes().value.map { n -> n.tags }.flatten().distinct()
         }
     }
 

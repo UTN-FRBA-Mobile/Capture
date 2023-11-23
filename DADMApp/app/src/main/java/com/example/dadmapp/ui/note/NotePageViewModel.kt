@@ -8,6 +8,9 @@ import com.example.dadmapp.DADMAppApplication
 import com.example.dadmapp.data.NoteRepository
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
 
 class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
     suspend fun deleteNote(id: String) {
