@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -128,7 +129,7 @@ fun NotePage(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp), // Adjust as needed
+                    .padding(horizontal = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -143,8 +144,8 @@ fun NotePage(
                 Row(
                     modifier = Modifier
                         .horizontalScroll(rememberScrollState())
-                        .weight(1f) // This allows the Row to occupy as much space as available
-                        .padding(horizontal = 2.dp), // Adjust as needed
+                        .weight(1f)
+                        .padding(horizontal = 2.dp),
                 ) {
 
                     if (tags.size < 3 && editMode) {
@@ -155,11 +156,13 @@ fun NotePage(
                                 .height(24.dp)
                                 .align(Alignment.CenterVertically)
                                 .padding(end = 4.dp),
-
                             contentPadding = PaddingValues(
                                 horizontal = 8.dp,
                                 vertical = 0.dp
-                            ) // Less padding around the text
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = LightRed
+                            )
                         ) {
                             Text("Add Tag", fontSize = 12.sp)
                         }
@@ -273,14 +276,13 @@ fun NotePage(
                             value = newTag,
                             onValueChange = { newTag = it },
                             singleLine = true
-                            // You might want to add more styling here
                         )
                     },
                     confirmButton = {
                         TextButton(
                             onClick = {
                                 if (newTag.isNotBlank()) {
-                                    tags = tags + Tag(name = newTag)
+                                    tags = tags + Tag(name = newTag, createdAt = "", updatedAt = "")
                                     newTag = ""
                                     showDialog = false
                                 }

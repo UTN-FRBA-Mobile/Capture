@@ -3,11 +3,12 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/user.module';
 import { User } from './users/user.model';
 import { NoteModule } from './note/note.module';
-import { Tag } from './tag/tag.model'; 
+import { Tag } from './tag/tag.model';
 import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { Note } from './note/note.model';
+import { TagPerNote } from './tag/tagPerNote.model';
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { Note } from './note/note.model';
       storage: '.db/data.sqlite3',
       autoLoadModels: true,
       synchronize: true,
-      models: [User, Note, Tag], // Include Note and Tag models here
+      models: [User, Note, Tag, TagPerNote],
     }),
     UsersModule,
     NoteModule,

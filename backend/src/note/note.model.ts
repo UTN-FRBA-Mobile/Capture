@@ -4,10 +4,11 @@ import {
   Column,
   BelongsTo,
   AllowNull,
-  HasMany,
+  BelongsToMany,
 } from 'sequelize-typescript';
 import { User } from '../users/user.model';
-import { Tag } from '../tag/tag.model'; // Import the Tag model
+import { Tag } from '../tag/tag.model';
+import { TagPerNote } from '../tag/tagPerNote.model';
 
 @Table({ timestamps: true })
 export class Note extends Model {
@@ -28,8 +29,6 @@ export class Note extends Model {
   @Column
   audioName: string;
 
-  @HasMany(() => Tag) // Use HasMany to represent one-to-many relationship
-  tags: Tag[]; // This array will contain multiple Tag instances associated with the Note
-
-  // ... other fields and associations
+  @BelongsToMany(() => Tag, () => TagPerNote)
+  tags: Tag[];
 }
