@@ -3,6 +3,8 @@ package com.example.dadmapp.ui.home
 import android.annotation.SuppressLint
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
@@ -35,6 +38,8 @@ import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -91,10 +96,14 @@ fun HomePage(
 
     val notesState = homePageViewModel.notes?.collectAsState()
 
+    var isNavigationDrawerVisible by remember {
+        mutableStateOf(false)
+    }
+
     Scaffold(
         containerColor = BgDark,
         topBar = {
-            TopBar()
+            TopBar(viewModel = homePageViewModel)
         },
         floatingActionButton = {
             Column {
@@ -176,72 +185,132 @@ fun HomePage(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar() {
+fun TopBar(viewModel: HomePageViewModel) {
+    var isSearchBarVisible by remember {
+        mutableStateOf(false)
+    }
+
     Row(
         modifier = Modifier.background(BgDark)
     ) {
-        TopAppBar(
-            title = {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    TextButton(onClick = {}) {
-                        Text("<Inserte logo aqui??>", color = Color.White)
-                    }
-                }
-            },
-            navigationIcon = {
-                Column(
-                    modifier = Modifier.fillMaxHeight(),
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Burger menu button",
-                            tint = Color.White
-                        )
-                    }
-                }
-            },
-            actions = {
-                Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search button",
-                            tint = Color.LightGray
-                        )
-                    }
-                }
-                Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-                    IconButton(
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "User button",
-                            tint = Color.White
-                        )
-                    }
-                }
-            },
-            modifier = Modifier
-                .padding(16.dp)
-                .fillMaxWidth()
-                .requiredHeight(45.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(BgDark),
-            colors = TopAppBarDefaults.smallTopAppBarColors(
-                containerColor = AccentRed1,
-                titleContentColor = BgDark
-            )
-        )
+        Crossfade(
+            targetState = isSearchBarVisible,
+            animationSpec = tween(350), label = ""
+        ) {
+            if (it) {
+                TopSearchBar(
+                    onCloseIcon = {
+                        isSearchBarVisible = false
+                        viewModel.onSearchTextChanged("")
+                    },
+                    viewModel = viewModel
+                )
+            } else {
+                TopAppBar(
+                    title = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            TextButton(onClick = {}) {
+                                Text("<Inserte logo aqui??>", color = Color.White)
+                            }
+                        }
+                    },
+                    navigationIcon = {
+                        Column(
+                            modifier = Modifier.fillMaxHeight(),
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            IconButton(
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Menu,
+                                    contentDescription = "Burger menu button",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    },
+                    actions = {
+                        Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                            IconButton(
+                                onClick = {
+                                    isSearchBarVisible = true
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Search button",
+                                    tint = Color.LightGray
+                                )
+                            }
+                        }
+                        Column(Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+                            IconButton(
+                                onClick = { /*TODO*/ }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.AccountCircle,
+                                    contentDescription = "User button",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth()
+                        .requiredHeight(50.dp)
+                        .clip(RoundedCornerShape(50.dp))
+                        .background(BgDark),
+                    colors = TopAppBarDefaults.smallTopAppBarColors(
+                        containerColor = AccentRed1,
+                        titleContentColor = BgDark
+                    )
+                )
+            }
+        }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopSearchBar(
+    onCloseIcon: () -> Unit,
+    viewModel: HomePageViewModel
+) {
+    var searchQuery by remember { mutableStateOf("") }
+
+    TextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .fillMaxWidth()
+            .requiredHeight(50.dp),
+        value = searchQuery,
+        onValueChange = {
+            searchQuery = it
+            viewModel.onSearchTextChanged(searchQuery)
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Search icon",
+                tint = Color.LightGray
+            )
+        },
+        trailingIcon = {
+            IconButton(onClick = { onCloseIcon() }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Close icon",
+                    tint = Color.White
+                )
+            }
+        },
+        colors = TextFieldDefaults.textFieldColors(containerColor = AccentRed1, textColor = Color.White)
+    )
 }

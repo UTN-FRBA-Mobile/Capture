@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.dadmapp.data.NoteRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.NoteRepository
 import com.example.dadmapp.model.note.Note
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
@@ -50,6 +50,12 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
                     }
                 }
             }
+    }
+
+    fun onSearchTextChanged(searchQuery: String) {
+        viewModelScope.launch {
+            notes = noteRepository.loadNotesWithTitleFilter(searchQuery)
+        }
     }
 
 

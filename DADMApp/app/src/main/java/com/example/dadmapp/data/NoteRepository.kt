@@ -5,6 +5,7 @@ import android.util.Log
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.network.NoteApiService
 import com.example.dadmapp.network.body.UpdateNoteBody
+import com.example.dadmapp.utils.normalizeText
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -12,6 +13,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.text.Collator
+import java.text.Normalizer
 import java.time.Instant
 
 interface NoteRepository {
@@ -22,6 +25,7 @@ interface NoteRepository {
     suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
     suspend fun updateNote(id: String, title: String?, content: String?)
+    suspend fun loadNotesWithTitleFilter(filter: String): MutableStateFlow<List<Note>>
 }
 
 class NetworkNoteRepository(
@@ -41,6 +45,15 @@ class NetworkNoteRepository(
         val newNotes = noteApiService.loadNotes()
         notes.update { newNotes }
         notesLoaded = true
+        return notes
+    }
+
+    override suspend fun loadNotesWithTitleFilter(filter: String): MutableStateFlow<List<Note>> {
+        var filteredNotes = noteApiService.loadNotes()
+        filteredNotes = ArrayList(filteredNotes.filter {
+            normalizeText(it.title).contains(normalizeText(filter))
+        })
+        notes.update { filteredNotes }
         return notes
     }
 
