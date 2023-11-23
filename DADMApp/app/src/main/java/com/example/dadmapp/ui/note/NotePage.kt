@@ -78,10 +78,6 @@ fun NotePage(
     var tags by remember { mutableStateOf(note.tags) }
     var newTag by rememberSaveable { mutableStateOf("") }
 
-    var selectedTag by remember { mutableStateOf<Tag?>(null) }
-    var showTagDialog by remember { mutableStateOf(false) }
-
-
     var showDialog by remember { mutableStateOf(false) }
 
     var titleVal by remember {
