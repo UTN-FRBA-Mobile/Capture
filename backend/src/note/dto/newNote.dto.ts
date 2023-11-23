@@ -3,4 +3,5 @@ export interface NewNoteDto {
   content: string;
   imageName?: string;
   audioName?: string;
+  tags?: string[];
 }

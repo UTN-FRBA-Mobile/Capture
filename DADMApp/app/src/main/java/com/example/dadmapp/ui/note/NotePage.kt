@@ -1,23 +1,26 @@
 package com.example.dadmapp.ui.note
 
 import android.annotation.SuppressLint
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Create
+
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -39,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -49,7 +53,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.R
+import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.components.AudioPlayer
+import com.example.dadmapp.ui.components.TagButton
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
 import com.example.dadmapp.utils.formattedDateStr
@@ -67,6 +74,11 @@ fun NotePage(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val note = notePageViewModel.getNote(noteId)
+
+    var tags by remember { mutableStateOf(note.tags) }
+    var newTag by rememberSaveable { mutableStateOf("") }
+
+    var showDialog by remember { mutableStateOf(false) }
 
     var titleVal by remember {
         mutableStateOf(note.title)
@@ -94,7 +106,7 @@ fun NotePage(
             if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
                 notePageViewModel.deleteNote(noteId)
             } else {
-                notePageViewModel.updateNote(noteId, titleVal, contentVal)
+                notePageViewModel.updateNote(noteId, titleVal, contentVal, tags)
             }
             onBackClick()
         }
@@ -102,10 +114,14 @@ fun NotePage(
 
     Scaffold(
         containerColor = BgDark,
+
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { onBack() }) {
                     Icon(
@@ -115,20 +131,48 @@ fun NotePage(
                     )
                 }
 
-                Row {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = if (editMode) "Edit enabled" else "Edit disabled",
-                            color = if (editMode) Color.White else Color.Gray,
-                            fontSize = 12.sp
-                        )
-                        IconButton(onClick = { editMode = !editMode }) {
-                            Icon(
-                                if (editMode) Icons.Filled.Create else Icons.Outlined.Create,
-                                contentDescription = "Edit note",
-                                tint = if (editMode) Color.White else Color.Gray
+                Row(
+                    modifier = Modifier
+                        .horizontalScroll(rememberScrollState())
+                        .weight(1f)
+                        .padding(horizontal = 2.dp),
+                ) {
+
+                    if (tags.size < 3 && editMode) {
+                        Button(
+                            onClick = { showDialog = true },
+                            shape = RoundedCornerShape(50),
+                            modifier = Modifier
+                                .height(24.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(end = 4.dp),
+                            contentPadding = PaddingValues(
+                                horizontal = 8.dp,
+                                vertical = 0.dp
+                            ),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = LightRed
                             )
+                        ) {
+                            Text("Add Tag", fontSize = 12.sp)
                         }
+                    }
+
+                    tags.forEach { tag ->
+                        TagButton(tag = tag, onClick = { tags -= tag }, showDeletable = editMode, enabled = editMode)
+                    }
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+
+                ) {
+                    IconButton(onClick = { editMode = !editMode }) {
+                        Icon(
+                            if (editMode) painterResource(id = R.drawable.baseline_edit_24) else painterResource(id = R.drawable.baseline_edit_off_24),
+                            contentDescription = "Edit note",
+                            tint = if (editMode) Color.White else Color.Gray
+                        )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
@@ -140,6 +184,8 @@ fun NotePage(
                 }
             }
         },
+
+
         bottomBar = {
             Text(
                 text = "Editado por ultima vez el " + formattedDateStr(note.updatedAt) + " a las " + formattedTimeStr(
@@ -194,7 +240,9 @@ fun NotePage(
 
             if (editMode) {
                 Row {
-                    ContentTextField(value = contentVal ?: "", onContentChange = { contentVal = it })
+                    ContentTextField(
+                        value = contentVal ?: "",
+                        onContentChange = { contentVal = it })
                 }
             } else {
                 Row {
@@ -207,6 +255,36 @@ fun NotePage(
                 }
             }
 
+
+
+            if (showDialog) {
+                AlertDialog(
+                    onDismissRequest = { showDialog = false },
+                    title = { Text("Add a Tag") },
+                    text = {
+                        TextField(
+                            value = newTag,
+                            onValueChange = { newTag = it },
+                            singleLine = true
+                        )
+                    },
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                if (newTag.isNotBlank()) {
+                                    tags = tags + Tag(name = newTag, createdAt = "", updatedAt = "")
+                                    newTag = ""
+                                    showDialog = false
+                                }
+                            }
+                        ) { Text("Add") }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDialog = false }) { Text("Cancel") }
+                    }
+                )
+            }
+
             DeleteAlertDialog(
                 show = showDeleteDialog,
                 onDismiss = { showDeleteDialog = false },
@@ -215,6 +293,9 @@ fun NotePage(
         }
     }
 }
+
+
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

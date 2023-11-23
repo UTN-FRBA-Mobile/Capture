@@ -11,13 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -42,7 +38,6 @@ import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.BgDark
-import com.example.dadmapp.ui.theme.LightRed
 import com.google.mlkit.vision.common.InputImage
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -145,6 +140,7 @@ fun HomePage(
                             date = note.createdAt,
                             imageName = note.imageName,
                             audioName = note.audioName,
+                            tags = note.tags,
                             onNoteClick = { onNoteClick(note.id.toString()) }
                         )
                     }

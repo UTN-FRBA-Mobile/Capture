@@ -17,6 +17,10 @@ interface AppContainer {
     val noteRepository: NoteRepository
 }
 
+private val json = Json {
+    ignoreUnknownKeys = true
+}
+
 class DefaultAppContainer(dataStore: DataStore<Preferences>): AppContainer {
     private val tokenInterceptor = TokenInterceptor()
 
@@ -25,7 +29,7 @@ class DefaultAppContainer(dataStore: DataStore<Preferences>): AppContainer {
         .build()
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .baseUrl(BASE_URL)
         .client(client)
         .build();
