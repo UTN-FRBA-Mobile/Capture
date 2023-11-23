@@ -23,16 +23,18 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.materialIcon
-import androidx.compose.material.icons.sharp.AccountCircle
-import androidx.compose.material.icons.sharp.Menu
-import androidx.compose.material.icons.sharp.Search
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ModalDrawerSheet
+import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SmallFloatingActionButton
 import androidx.compose.material3.Surface
@@ -42,19 +44,19 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -64,6 +66,7 @@ import com.example.dadmapp.ui.components.NotePreview
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.BgDark
 import com.google.mlkit.vision.common.InputImage
+import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -96,99 +99,126 @@ fun HomePage(
 
     val notesState = homePageViewModel.notes?.collectAsState()
 
-    var isNavigationDrawerVisible by remember {
-        mutableStateOf(false)
-    }
+    var drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    Scaffold(
-        containerColor = BgDark,
-        topBar = {
-            TopBar(viewModel = homePageViewModel)
-        },
-        floatingActionButton = {
-            Column {
-                if (showOptions) {
-                    DropdownMenu(
-                        expanded = showOptions,
-                        onDismissRequest = { showOptions = !showOptions },
-                        modifier = Modifier.background(AccentRed1)
-                    ) {
-                        DropdownOption(
-                            "Write",
-                            { homePageViewModel.onNewNote() },
-                            Icons.Filled.Create,
-                            "Create note with text"
-                        )
-                        DropdownOption(
-                            "From image",
-                            { launcher.launch("image/*") },
-                            painterResource(id = R.drawable.camera),
-                            "Create note from image"
-                        )
-                        DropdownOption(
-                            "From speech",
-                            { onRecordAudio() },
-                            painterResource(id = R.drawable.microphone),
-                            "Create note from speech",
-                        )
-                    }
+    ModalNavigationDrawer(drawerState = drawerState,
+        drawerContent = {
+        ModalDrawerSheet {
+            DrawerHeader()
+            DrawerBody(items = listOf(
+                DrawerItem(
+                    id = "Primero",
+                    title = "Primero",
+                    icon = Icons.Filled.Home,
+                    contentDesc = "Ir a primero"
+                ),
+                DrawerItem(
+                    id = "Segundo",
+                    title = "Ayuda",
+                    icon = Icons.Filled.Info,
+                    contentDesc = "Ayuda"
+                )
+            ), onItemClick = {
+                when(it.id) {
+                    "Primero" -> {/*TODO*/}
+                    "Segundo" -> {/*TODO*/}
                 }
+            })
+        }
+    }) {
 
-                Surface(
-                    shadowElevation = 10.dp,
-                    color = AccentRed1,
-                    shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier
-                        .width(btnSize)
-                        .height(btnSize)
-                ) {
-                    SmallFloatingActionButton(
-                        onClick = { showOptions = !showOptions },
-                        containerColor = AccentRed1,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        Icon(
-                            Icons.Filled.Add,
-                            "Add note button",
-                            tint = Color.White
-                        )
+
+        Scaffold(
+            containerColor = BgDark,
+            topBar = {
+                TopBar(viewModel = homePageViewModel, drawerState = drawerState)
+            },
+            floatingActionButton = {
+                Column {
+                    if (showOptions) {
+                        DropdownMenu(
+                            expanded = showOptions,
+                            onDismissRequest = { showOptions = !showOptions },
+                            modifier = Modifier.background(AccentRed1)
+                        ) {
+                            DropdownOption(
+                                "Write",
+                                { homePageViewModel.onNewNote() },
+                                Icons.Filled.Create,
+                                "Create note with text"
+                            )
+                            DropdownOption(
+                                "From image",
+                                { launcher.launch("image/*") },
+                                painterResource(id = R.drawable.camera),
+                                "Create note from image"
+                            )
+                            DropdownOption(
+                                "From speech",
+                                { onRecordAudio() },
+                                painterResource(id = R.drawable.microphone),
+                                "Create note from speech",
+                            )
+                        }
                     }
-                }
-            }
-        }, content = { innerPadding ->
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(10.dp),
-                contentPadding = innerPadding
-            ) {
-                items(notesState?.value?.size ?: 0) { idx ->
-                    val note = notesState?.value?.get(idx)
-                    if (note != null) {
-                        Row(modifier = Modifier.padding(bottom = 20.dp)) {
-                            NotePreview(
-                                title = note.title,
-                                content = note.content ?: "",
-                                date = note.createdAt,
-                                imageName = note.imageName,
-                                audioName = note.audioName,
-                                onNoteClick = { onNoteClick(note.id.toString()) }
+
+                    Surface(
+                        shadowElevation = 10.dp,
+                        color = AccentRed1,
+                        shape = RoundedCornerShape(10.dp),
+                        modifier = Modifier
+                            .width(btnSize)
+                            .height(btnSize)
+                    ) {
+                        SmallFloatingActionButton(
+                            onClick = { showOptions = !showOptions },
+                            containerColor = AccentRed1,
+                            modifier = Modifier.fillMaxSize()
+                        ) {
+                            Icon(
+                                Icons.Filled.Add,
+                                "Add note button",
+                                tint = Color.White
                             )
                         }
                     }
                 }
+            }, content = { innerPadding ->
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    contentPadding = innerPadding
+                ) {
+                    items(notesState?.value?.size ?: 0) { idx ->
+                        val note = notesState?.value?.get(idx)
+                        if (note != null) {
+                            Row(modifier = Modifier.padding(bottom = 20.dp)) {
+                                NotePreview(
+                                    title = note.title,
+                                    content = note.content ?: "",
+                                    date = note.createdAt,
+                                    imageName = note.imageName,
+                                    audioName = note.audioName,
+                                    onNoteClick = { onNoteClick(note.id.toString()) }
+                                )
+                            }
+                        }
+                    }
+                }
             }
-        }
-    )
+        )
+    }
 }
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(viewModel: HomePageViewModel) {
+fun TopBar(viewModel: HomePageViewModel, drawerState: DrawerState) {
     var isSearchBarVisible by remember {
         mutableStateOf(false)
     }
+    val scope = rememberCoroutineScope()
 
     Row(
         modifier = Modifier.background(BgDark)
@@ -224,7 +254,13 @@ fun TopBar(viewModel: HomePageViewModel) {
                             verticalArrangement = Arrangement.Center
                         ) {
                             IconButton(
-                                onClick = { /*TODO*/ }
+                                onClick = {
+                                    scope.launch {
+                                        drawerState.apply {
+                                            if (isClosed) open() else close()
+                                        }
+                                    }
+                                }
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.Menu,
@@ -311,6 +347,9 @@ fun TopSearchBar(
                 )
             }
         },
-        colors = TextFieldDefaults.textFieldColors(containerColor = AccentRed1, textColor = Color.White)
+        colors = TextFieldDefaults.textFieldColors(
+            containerColor = AccentRed1,
+            textColor = Color.White
+        )
     )
 }
