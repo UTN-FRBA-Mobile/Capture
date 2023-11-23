@@ -105,12 +105,6 @@ fun NotePage(
         }
     }
 
-    fun onTagClicked(tag: Tag) {
-        selectedTag = tag
-        showTagDialog = true
-    }
-
-
     fun onBack() {
         coroutineScope.launch {
             if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
