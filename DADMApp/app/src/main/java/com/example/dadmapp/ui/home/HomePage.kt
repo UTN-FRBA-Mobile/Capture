@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.R
@@ -82,22 +83,22 @@ fun HomePage(
                         modifier = Modifier.background(AccentRed1)
                     ) {
                         DropdownOption(
-                            "Write",
+                            stringResource(R.string.WRITE),
                             { homePageViewModel.onNewNote() },
                             Icons.Filled.Create,
-                            "Create note with text"
+                            stringResource(R.string.CREATE_NOTE_WITH_TEXT)
                         )
                         DropdownOption(
-                            "From image",
+                            stringResource(R.string.FROM_IMAGE),
                             { launcher.launch("image/*") },
                             painterResource(id = R.drawable.camera),
-                            "Create note from image"
+                            stringResource(R.string.CREATE_NOTE_FROM_IMAGE)
                         )
                         DropdownOption(
-                            "From speech",
+                            stringResource(R.string.FROM_AUDIO),
                             { onRecordAudio() },
                             painterResource(id = R.drawable.microphone),
-                            "Create note from speech",
+                            stringResource(R.string.CREATE_NOTE_FROM_SPEECH),
                         )
                     }
                 }
@@ -117,7 +118,7 @@ fun HomePage(
                     ) {
                         Icon(
                             Icons.Filled.Add,
-                            "Add note button",
+                            stringResource(R.string.ADD_NOTE_BUTTON),
                             tint = Color.White
                         )
                     }

@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +30,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.example.dadmapp.IMGS_PATH
 import com.example.dadmapp.LOCALHOST_URL
+import com.example.dadmapp.R
 import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.BgDark
@@ -75,7 +77,7 @@ fun NotePreview(
                             .data("$LOCALHOST_URL/$IMGS_PATH/$imageName")
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Image of the note",
+                        contentDescription = stringResource(R.string.IMAGE_OF_THE_NOTE),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()

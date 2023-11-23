@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -126,7 +127,7 @@ fun NotePage(
                 IconButton(onClick = { onBack() }) {
                     Icon(
                         Icons.Filled.ArrowBack,
-                        contentDescription = "Back icon",
+                        contentDescription = stringResource(R.string.BACK_ICON),
                         tint = Color.White
                     )
                 }
@@ -154,7 +155,7 @@ fun NotePage(
                                 containerColor = LightRed
                             )
                         ) {
-                            Text("Add Tag", fontSize = 12.sp)
+                            Text(stringResource(R.string.ADD_TAG), fontSize = 12.sp)
                         }
                     }
 
@@ -170,14 +171,14 @@ fun NotePage(
                     IconButton(onClick = { editMode = !editMode }) {
                         Icon(
                             if (editMode) painterResource(id = R.drawable.baseline_edit_24) else painterResource(id = R.drawable.baseline_edit_off_24),
-                            contentDescription = "Edit note",
+                            contentDescription = stringResource(R.string.EDIT_NOTE),
                             tint = if (editMode) Color.White else Color.Gray
                         )
                     }
                     IconButton(onClick = { showDeleteDialog = true }) {
                         Icon(
                             Icons.Filled.Delete,
-                            contentDescription = "Delete note",
+                            contentDescription = stringResource(R.string.DELETE_NOTE),
                             tint = Color.White
                         )
                     }
@@ -188,9 +189,10 @@ fun NotePage(
 
         bottomBar = {
             Text(
-                text = "Editado por ultima vez el " + formattedDateStr(note.updatedAt) + " a las " + formattedTimeStr(
-                    note.updatedAt
-                ),
+                text = "${stringResource(R.string.LAST_EDITED)} " +
+                        formattedDateStr(note.updatedAt) +
+                        " ${stringResource(R.string.LAST_EDITED_AT_SUBSTR)} " +
+                        formattedTimeStr(note.updatedAt),
                 color = Color.Gray,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth(),
@@ -214,7 +216,7 @@ fun NotePage(
                             .data("$LOCALHOST_URL/$IMGS_PATH/${note.imageName}")
                             .crossfade(true)
                             .build(),
-                        contentDescription = "Image of the note",
+                        contentDescription = stringResource(R.string.IMAGE_OF_THE_NOTE),
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
@@ -260,7 +262,7 @@ fun NotePage(
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
-                    title = { Text("Add a Tag") },
+                    title = { Text(stringResource(R.string.ADD_TAG)) },
                     text = {
                         TextField(
                             value = newTag,
@@ -280,7 +282,7 @@ fun NotePage(
                         ) { Text("Add") }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showDialog = false }) { Text("Cancel") }
+                        TextButton(onClick = { showDialog = false }) { Text(stringResource(R.string.CANCEL)) }
                     }
                 )
             }
@@ -309,7 +311,7 @@ fun TitleTextField(
     TextField(
         value = value,
         singleLine = true,
-        placeholder = { Text(text = "Title", fontWeight = FontWeight.Bold, fontSize = fontSize) },
+        placeholder = { Text(text = stringResource(R.string.TITLE), fontWeight = FontWeight.Bold, fontSize = fontSize) },
         onValueChange = { onTitleChange(it) },
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,
@@ -333,7 +335,7 @@ fun ContentTextField(value: String, onContentChange: (newContent: String) -> Uni
     TextField(
         value = value,
         onValueChange = { onContentChange(it) },
-        placeholder = { Text(text = "Write something here...", fontSize = fontSize) },
+        placeholder = { Text(text = stringResource(R.string.WRITE_SOMETHING), fontSize = fontSize) },
         colors = TextFieldDefaults.textFieldColors(
             textColor = Color.White,
             containerColor = BgDark,
@@ -359,16 +361,16 @@ fun DeleteAlertDialog(
             onDismissRequest = { onDismiss() },
             confirmButton = {
                 TextButton(onClick = { onConfirm() }) {
-                    Text(text = "Confirmar")
+                    Text(text = stringResource(R.string.CONFIRM))
                 }
 
             },
             dismissButton = {
                 TextButton(onClick = { onDismiss() }) {
-                    Text(text = "Cancelar")
+                    Text(text = stringResource(R.string.CANCEL))
                 }
             },
-            title = { Text(text = "¿Está seguro que desea eliminar la nota?") }
+            title = { Text(text = stringResource(R.string.DELETE_NOTE_CONFIRMATION_TEXT)) }
         )
     }
 }

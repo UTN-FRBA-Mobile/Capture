@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">DADM App</string>
+    <string name="START_RECORDING">Start recording</string>
+    <string name="BACK_ICON">Back icon</string>
+    <string name="ADD_TAG">Add Tag</string>
+    <string name="EDIT_NOTE">Edit note</string>
+    <string name="DELETE_NOTE">Delete note</string>
+    <string name="LAST_EDITED">Last edited</string>
+    <string name="LAST_EDITED_AT_SUBSTR">at</string>
+    <string name="IMAGE_OF_THE_NOTE">Image of the note</string>
+    <string name="CANCEL">Cancel</string>
+    <string name="TITLE">Title</string>
+    <string name="WRITE_SOMETHING">Write something here...</string>
+    <string name="CONFIRM">Confirm</string>
+    <string name="DELETE_NOTE_CONFIRMATION_TEXT">Are you sure you want to delete the note?</string>
+    <string name="LOGIN_ERROR_STR">Login error</string>
+    <string name="Ok">Ok</string>
+    <string name="USERNAME">Username</string>
+    <string name="PASSWORD">Password</string>
+    <string name="LOGIN">Log in</string>
+    <string name="OR_SIGN_UP">or sign up!</string>
+    <string name="ADD_NOTE_BUTTON">Add note button</string>
+    <string name="WRITE">Write</string>
+    <string name="CREATE_NOTE_WITH_TEXT">Create note with text</string>
+    <string name="FROM_IMAGE">From image</string>
+    <string name="CREATE_NOTE_FROM_IMAGE">Create note from image</string>
+    <string name="FROM_AUDIO">From speech</string>
+    <string name="CREATE_NOTE_FROM_SPEECH">Create note from speech</string>
+    <string name="STOP_AUDIO">Stop audio</string>
+    <string name="PLAY_AUDIO">Play audio</string>
+    <string name="DELETE_TAG">Delete Tag</string>
 </resources>

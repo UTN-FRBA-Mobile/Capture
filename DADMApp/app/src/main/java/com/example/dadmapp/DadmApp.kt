@@ -91,7 +91,8 @@ fun DadmApp(
 
             composable("recordAudio") {
                 RecordAudioPage(
-                    onCreatedNote = { noteId -> navController.navigate("note/$noteId") }
+                    onCreatedNote = { noteId -> navController.navigate("note/$noteId") },
+                    onBack = { navController.navigate(RouteState.Home.title) }
                 )
             }
         }

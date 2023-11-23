@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dadmapp.AUDIO_PATH
 import com.example.dadmapp.LOCALHOST_URL
@@ -168,14 +169,14 @@ fun PlayButton(
     if (playing) {
         IconButton(
             onClick = { onPlayStop() },
-            contentDescription = "Stop audio",
+            contentDescription = stringResource(R.string.STOP_AUDIO),
             painterResource = painterResource(id = R.drawable.pause_icon)
         )
     } else {
         IconButton(
             onClick = { onPlayStart() },
             icon = Icons.Filled.PlayArrow,
-            contentDescription = "Play audio"
+            contentDescription = stringResource(R.string.PLAY_AUDIO)
         )
     }
 }

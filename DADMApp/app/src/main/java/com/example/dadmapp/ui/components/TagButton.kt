@@ -16,6 +16,8 @@ import com.example.dadmapp.ui.theme.AccentRed1
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.ui.res.stringResource
+import com.example.dadmapp.R
 
 @Composable
 fun TagButton(
@@ -48,7 +50,7 @@ fun TagButton(
             if (showDeletable) {
                 Icon(
                     imageVector = Icons.Filled.Close,
-                    contentDescription = "Delete tag",
+                    contentDescription = stringResource(R.string.DELETE_TAG),
                     tint = Color.White,
                 )
             }

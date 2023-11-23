@@ -23,8 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.CustomButton
 import com.example.dadmapp.ui.components.CustomTextField
 
@@ -59,11 +61,11 @@ fun LoginPage(
         isLoading = false
         AlertDialog(
             onDismissRequest = { viewModel.loginError = null },
-            title = { Text(text = "Login Error") },
+            title = { Text(text = stringResource(R.string.LOGIN_ERROR_STR)) },
             text = { Text(text = viewModel.loginError ?: "") },
             confirmButton = {
                 TextButton(onClick = { viewModel.loginError = null }) {
-                    Text("OK")
+                    Text(stringResource(R.string.Ok))
                 }
             }
         )
@@ -77,13 +79,13 @@ fun LoginPage(
         Row(
             modifier = Modifier.padding(10.dp)
         ) {
-            CustomTextField(label = "Username", value = username, onValueChange = { username = it })
+            CustomTextField(label = stringResource(R.string.USERNAME), value = username, onValueChange = { username = it })
         }
         Row(
             modifier = Modifier.padding(10.dp)
         ) {
             CustomTextField(
-                label = "Password",
+                label = stringResource(R.string.PASSWORD),
                 value = password,
                 onValueChange = { password = it },
                 isPassword = true
@@ -95,13 +97,13 @@ fun LoginPage(
             verticalAlignment = Alignment.CenterVertically
 
         ) {
-            CustomButton(label = "Log in", onClick = {
+            CustomButton(label = stringResource(R.string.LOGIN), onClick = {
                 isLoading = true
                 viewModel.login(username, password)
             }, enabled = allFieldsFilled, showLoading = isLoading)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = "or sign up!",
+                text = stringResource(R.string.OR_SIGN_UP),
                 color = Color.White,
                 modifier = Modifier.clickable { onNavigateToRegister() }
             )
