@@ -1,8 +1,10 @@
 <resources>
     <string name="app_name">DADM App</string>
+    <string name="LOGO">Capture Logo</string>
     <string name="START_RECORDING">Start recording</string>
     <string name="BACK_ICON">Back icon</string>
     <string name="ADD_TAG">Add Tag</string>
+    <string name="FILTER_BY_TAGS">Filter by tags…</string>
     <string name="EDIT_NOTE">Edit note</string>
     <string name="DELETE_NOTE">Delete note</string>
     <string name="LAST_EDITED">Last edited</string>
@@ -10,7 +12,7 @@
     <string name="IMAGE_OF_THE_NOTE">Image of the note</string>
     <string name="CANCEL">Cancel</string>
     <string name="TITLE">Title</string>
-    <string name="WRITE_SOMETHING">Write something here...</string>
+    <string name="WRITE_SOMETHING">Write something here…</string>
     <string name="CONFIRM">Confirm</string>
     <string name="DELETE_NOTE_CONFIRMATION_TEXT">Are you sure you want to delete the note?</string>
     <string name="LOGIN_ERROR_STR">Login error</string>
@@ -29,4 +31,8 @@
     <string name="STOP_AUDIO">Stop audio</string>
     <string name="PLAY_AUDIO">Play audio</string>
     <string name="DELETE_TAG">Delete Tag</string>
+    <string name="BURGER_MENU_BUTTON">Burger menu button</string>
+    <string name="SEARCH_BUTTON">Search button</string>
+    <string name="SEARCH_ICON">Search icon</string>
+    <string name="CLOSE_ICON">Close icon</string>
 </resources>

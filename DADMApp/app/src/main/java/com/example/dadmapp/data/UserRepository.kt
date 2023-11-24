@@ -19,6 +19,7 @@ interface UserRepository {
     suspend fun login(username: String, password: String)
     suspend fun signUp(username: String, password: String)
     suspend fun hasExistingToken(): Boolean
+    suspend fun logOut()
 }
 
 class NetworkUserRepository(
@@ -27,6 +28,13 @@ class NetworkUserRepository(
     private val dataStore: DataStore<Preferences>
 ): UserRepository {
     private val TOKEN_KEY = stringPreferencesKey(TOKEN_NAME)
+
+    override suspend fun logOut() {
+        dataStore.edit {
+            it.remove(TOKEN_KEY)
+        }
+        tokenInterceptor.setToken(null)
+    }
 
     override suspend fun login(username: String, password: String) {
         val body = LoginRequest(username, password)

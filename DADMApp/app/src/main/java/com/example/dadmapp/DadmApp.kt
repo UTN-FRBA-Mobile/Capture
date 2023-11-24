@@ -36,7 +36,7 @@ enum class RouteState(val title: String) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DadmApp(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     Scaffold(
         containerColor = BgDark
@@ -73,7 +73,10 @@ fun DadmApp(
                 HomePage(
                     { noteId: String -> navController.navigate("note/$noteId") },
                     vm,
-                    { navController.navigate("recordAudio") }
+                    { navController.navigate("recordAudio") },
+                    {
+                        navController.navigate(RouteState.Login.title)
+                    }
                 )
             }
 

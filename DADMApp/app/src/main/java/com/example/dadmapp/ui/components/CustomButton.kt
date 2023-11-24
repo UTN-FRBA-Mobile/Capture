@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.dadmapp.ui.theme.DisabledButton
-import com.example.dadmapp.ui.theme.EnabledButton
+import com.example.dadmapp.ui.theme.LightRed
 
 @Composable
 fun CustomButton(
@@ -26,7 +26,7 @@ fun CustomButton(
     Button(
         onClick = { onClick() },
         colors = ButtonDefaults.buttonColors(
-            containerColor = EnabledButton,
+            containerColor = LightRed,
             disabledContainerColor = DisabledButton
         ),
         shape = RoundedCornerShape(10.dp),

@@ -2,6 +2,7 @@ package com.example.dadmapp.ui.home
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,24 +12,41 @@ import com.example.dadmapp.data.NoteRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.UserRepository
 import com.example.dadmapp.model.note.Note
+import com.example.dadmapp.model.tag.Tag
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
+class HomePageViewModel(
+    private val noteRepository: NoteRepository,
+    private val userRepository: UserRepository
+): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
+    var tags: List<Tag> = emptyList()
     var selectedNoteId by mutableStateOf<String?>(null)
+    var filterByTags: List<Tag> by mutableStateOf(emptyList())
+    var searchTerm by mutableStateOf<String?>(null)
 
     init {
         loadNotes()
     }
 
+    fun onLogOut(otherLogoutActions: () -> Unit) {
+        viewModelScope.launch {
+            userRepository.logOut()
+            otherLogoutActions()
+            noteRepository.clear()
+        }
+    }
+
     private fun loadNotes() {
         viewModelScope.launch {
             notes = noteRepository.loadNotes()
+            tags = noteRepository.loadNotes().value.map { n -> n.tags }.flatten().distinct()
         }
     }
 
@@ -52,13 +70,13 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
             }
     }
 
-
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 val application = (this[APPLICATION_KEY] as DADMAppApplication)
                 val noteRepository = application.container.noteRepository
-                HomePageViewModel(noteRepository)
+                val userRepository = application.container.userRepository
+                HomePageViewModel(noteRepository, userRepository)
             }
         }
     }
