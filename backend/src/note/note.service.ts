@@ -38,6 +38,7 @@ export class NoteService {
         username,
       },
       include: 'tags',
+      order: [['createdAt', 'DESC']],
     });
   }
 
