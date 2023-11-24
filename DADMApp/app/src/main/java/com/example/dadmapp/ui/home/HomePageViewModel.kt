@@ -12,6 +12,7 @@ import com.example.dadmapp.data.NoteRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.UserRepository
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
 import com.google.mlkit.vision.common.InputImage
@@ -20,7 +21,10 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
+class HomePageViewModel(
+    private val noteRepository: NoteRepository,
+    private val userRepository: UserRepository
+): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var tags: List<Tag> = emptyList()
     var selectedNoteId by mutableStateOf<String?>(null)
@@ -29,6 +33,14 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
 
     init {
         loadNotes()
+    }
+
+    fun onLogOut(otherLogoutActions: () -> Unit) {
+        viewModelScope.launch {
+            userRepository.logOut()
+            otherLogoutActions()
+            noteRepository.clear()
+        }
     }
 
     private fun loadNotes() {
@@ -63,7 +75,8 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
             initializer {
                 val application = (this[APPLICATION_KEY] as DADMAppApplication)
                 val noteRepository = application.container.noteRepository
-                HomePageViewModel(noteRepository)
+                val userRepository = application.container.userRepository
+                HomePageViewModel(noteRepository, userRepository)
             }
         }
     }

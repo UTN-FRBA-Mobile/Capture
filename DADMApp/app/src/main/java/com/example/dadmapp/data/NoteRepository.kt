@@ -23,6 +23,7 @@ interface NoteRepository {
     suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
     suspend fun updateNote(id: String, title: String?, content: String?, tags: List<Tag>)
+    fun clear()
 }
 
 class NetworkNoteRepository(
@@ -30,6 +31,11 @@ class NetworkNoteRepository(
 ): NoteRepository {
     private var notesLoaded = false
     private var notes = MutableStateFlow(emptyList<Note>())
+
+    override fun clear() {
+        notesLoaded = false
+        notes.update { emptyList() }
+    }
 
     override suspend fun loadNotes(): MutableStateFlow<List<Note>> {
         if (notesLoaded) {

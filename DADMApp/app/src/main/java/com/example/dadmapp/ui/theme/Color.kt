@@ -13,5 +13,4 @@ val Pink40 = Color(0xFF7D5260)
 val BgDark = Color(0xFF201B18)
 val AccentRed1 = Color(0xFF382A27)
 val LightRed = Color(0xFFAE948F)
-val EnabledButton = Color(0xFF5555FF)  // New enabled button color
-val DisabledButton = Color(0xFFD6D6D6)  // New disabled button color
+val DisabledButton = Color(0xFFD6D6D6)
