@@ -31,4 +31,8 @@
     <string name="STOP_AUDIO">Stop audio</string>
     <string name="PLAY_AUDIO">Play audio</string>
     <string name="DELETE_TAG">Delete Tag</string>
+    <string name="BURGER_MENU_BUTTON">Burger menu button</string>
+    <string name="SEARCH_BUTTON">Search button</string>
+    <string name="SEARCH_ICON">Search icon</string>
+    <string name="CLOSE_ICON">Close icon</string>
 </resources>

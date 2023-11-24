@@ -2,6 +2,7 @@ package com.example.dadmapp.ui.home
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -23,20 +24,16 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var tags: List<Tag> = emptyList()
     var selectedNoteId by mutableStateOf<String?>(null)
+    var filterByTags: List<Tag> by mutableStateOf(emptyList())
+    var searchTerm by mutableStateOf<String?>(null)
 
     init {
         loadNotes()
-        loadTags()
     }
 
     private fun loadNotes() {
         viewModelScope.launch {
             notes = noteRepository.loadNotes()
-        }
-    }
-
-    private fun loadTags() {
-        viewModelScope.launch {
             tags = noteRepository.loadNotes().value.map { n -> n.tags }.flatten().distinct()
         }
     }
@@ -60,7 +57,6 @@ class HomePageViewModel(private val noteRepository: NoteRepository): ViewModel()
                 }
             }
     }
-
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
