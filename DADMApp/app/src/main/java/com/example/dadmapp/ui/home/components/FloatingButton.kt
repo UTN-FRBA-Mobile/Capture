@@ -27,10 +27,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dadmapp.R
+import com.example.dadmapp.ui.components.NetworkErrorDialog
 import com.example.dadmapp.ui.home.DropdownOption
 import com.example.dadmapp.ui.home.HomePageViewModel
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.google.mlkit.vision.common.InputImage
+import java.io.IOException
 
 @Composable
 fun FloatingButton(
@@ -40,16 +42,26 @@ fun FloatingButton(
     val ctx = LocalContext.current
 
     var showOptions by remember { mutableStateOf(false) }
+    var showNetworkErrorDialog by remember { mutableStateOf(false) }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
-            urlList ->
-        val uri = urlList[0]
-        val img = InputImage.fromFilePath(ctx, uri)
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { urlList ->
+            val uri = urlList[0]
+            val img = InputImage.fromFilePath(ctx, uri)
 
-        homePageViewModel.onNewNoteFromImage(img)
-    }
+            try {
+                homePageViewModel.onNewNoteFromImage(img)
+            } catch (e: IOException) {
+                showNetworkErrorDialog = true
+            }
+        }
 
     val btnSize = 45.dp
+
+    NetworkErrorDialog(
+        show = showNetworkErrorDialog,
+        onDismiss = { showNetworkErrorDialog = false }
+    )
 
     Column {
         if (showOptions) {
@@ -60,7 +72,14 @@ fun FloatingButton(
             ) {
                 DropdownOption(
                     stringResource(R.string.WRITE),
-                    { homePageViewModel.onNewNote() },
+                    {
+                        try {
+                            homePageViewModel.onNewNote()
+                        } catch (e: IOException) {
+                            showNetworkErrorDialog = true
+                        }
+
+                    },
                     Icons.Filled.Create,
                     stringResource(R.string.CREATE_NOTE_WITH_TEXT)
                 )
@@ -72,7 +91,13 @@ fun FloatingButton(
                 )
                 DropdownOption(
                     stringResource(R.string.FROM_AUDIO),
-                    { onRecordAudio() },
+                    {
+                        try {
+                            onRecordAudio()
+                        } catch (e: IOException) {
+                            showNetworkErrorDialog = true
+                        }
+                    },
                     painterResource(id = R.drawable.microphone),
                     stringResource(R.string.CREATE_NOTE_FROM_SPEECH),
                 )
