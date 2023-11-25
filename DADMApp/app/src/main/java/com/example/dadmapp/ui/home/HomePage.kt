@@ -119,7 +119,7 @@ fun HomePage(
                 ) {
                     Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = Color.White)
                     Text(
-                        text = "cristobalszk",
+                        text = homePageViewModel.username ?: "",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold
                     )

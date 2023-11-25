@@ -30,9 +30,13 @@ class HomePageViewModel(
     var selectedNoteId by mutableStateOf<String?>(null)
     var filterByTags: List<Tag> by mutableStateOf(emptyList())
     var searchTerm by mutableStateOf<String?>(null)
+    var username by mutableStateOf<String?>(null)
 
     init {
         loadNotes()
+        viewModelScope.launch {
+            username = userRepository.getUsername()
+        }
     }
 
     fun onLogOut(otherLogoutActions: () -> Unit) {

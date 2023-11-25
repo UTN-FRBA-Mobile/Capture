@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.dadmapp.exceptions.LoginException
 import com.example.dadmapp.exceptions.SignUpException
 import com.example.dadmapp.model.login.LoginRequest
-import com.example.dadmapp.model.singup.SignUpResponse
 import com.example.dadmapp.model.singup.SignupRequest
 import com.example.dadmapp.network.AuthApiService
 import kotlinx.coroutines.flow.firstOrNull
@@ -20,6 +19,7 @@ interface UserRepository {
     suspend fun signUp(username: String, password: String)
     suspend fun hasExistingToken(): Boolean
     suspend fun logOut()
+    suspend fun getUsername(): String
 }
 
 class NetworkUserRepository(
@@ -28,10 +28,12 @@ class NetworkUserRepository(
     private val dataStore: DataStore<Preferences>
 ): UserRepository {
     private val TOKEN_KEY = stringPreferencesKey(TOKEN_NAME)
+    private val USER_KEY = stringPreferencesKey(USER_NAME)
 
     override suspend fun logOut() {
         dataStore.edit {
             it.remove(TOKEN_KEY)
+            it.remove(USER_KEY)
         }
         tokenInterceptor.setToken(null)
     }
@@ -43,6 +45,7 @@ class NetworkUserRepository(
             tokenInterceptor.setToken(res.token)
             dataStore.edit { settings ->
                 settings[TOKEN_KEY] = res.token
+                settings[USER_KEY] = username
             }
         } catch (e: HttpException) {
             when (e.code()) {
@@ -87,7 +90,18 @@ class NetworkUserRepository(
         return false
     }
 
+    override suspend fun getUsername(): String {
+        val username = dataStore.data.map {
+            preferences -> preferences[USER_KEY]
+        }.firstOrNull()
+
+        return username ?: ""
+    }
+
+
+
     companion object {
         private const val TOKEN_NAME = "TOKEN"
+        private const val USER_NAME = "USER"
     }
 }
