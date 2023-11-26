@@ -20,12 +20,11 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import java.io.IOException
 
 class HomePageViewModel(
     private val noteRepository: NoteRepository,
     private val userRepository: UserRepository
-) : ViewModel() {
+): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var tags: MutableStateFlow<List<Tag>>? = MutableStateFlow(emptyList())
     var selectedNoteId by mutableStateOf<String?>(null)
@@ -55,44 +54,21 @@ class HomePageViewModel(
         }
     }
 
-    fun onNewNote(
-        onIOException: () -> Unit,
-        onStartLoading: () -> Unit = {},
-        onEndLoading: () -> Unit = {}
-    ) {
+    fun onNewNote() {
         viewModelScope.launch {
-            try {
-                onStartLoading()
-                val newNote = noteRepository.createNote()
-                selectedNoteId = newNote.id.toString()
-            } catch (e: IOException) {
-                onIOException()
-            } finally {
-                onEndLoading()
-            }
+            val newNote = noteRepository.createNote()
+            selectedNoteId = newNote.id.toString()
         }
     }
 
-    fun onNewNoteFromImage(
-        img: InputImage,
-        onIOException: () -> Unit,
-        onStartLoading: () -> Unit = {},
-        onEndLoading: () -> Unit = {}
-    ) {
+    fun onNewNoteFromImage(img: InputImage) {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
         recognizer.process(img)
             .addOnSuccessListener { text ->
                 if (img.bitmapInternal != null) {
                     viewModelScope.launch {
-                        try {
-                            onStartLoading()
-                            noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
-                        } catch (e: IOException) {
-                            onIOException()
-                        } finally {
-                            onEndLoading()
-                        }
+                        noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
                     }
                 }
             }
