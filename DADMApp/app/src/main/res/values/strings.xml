@@ -35,4 +35,6 @@
     <string name="SEARCH_BUTTON">Search button</string>
     <string name="SEARCH_ICON">Search icon</string>
     <string name="CLOSE_ICON">Close icon</string>
+    <string name="ALLOW_ACCESS_TO_MICROPHONE">"You need to allow access to the Microphone for this feature to work"</string>
+    <string name="REQUEST_PERMISSION">Request permission</string>
 </resources>

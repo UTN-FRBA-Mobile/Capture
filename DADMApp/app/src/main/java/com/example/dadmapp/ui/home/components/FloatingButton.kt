@@ -44,17 +44,20 @@ fun FloatingButton(
     var showOptions by remember { mutableStateOf(false) }
     var showNetworkErrorDialog by remember { mutableStateOf(false) }
 
-    val launcher =
-        rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) { urlList ->
-            val uri = urlList[0]
-            val img = InputImage.fromFilePath(ctx, uri)
 
-            try {
-                homePageViewModel.onNewNoteFromImage(img)
-            } catch (e: IOException) {
-                showNetworkErrorDialog = true
-            }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri == null) {
+            return@rememberLauncherForActivityResult
         }
+
+        val img = InputImage.fromFilePath(ctx, uri)
+
+        try {
+            homePageViewModel.onNewNoteFromImage(img)
+        } catch (e: IOException) {
+            showNetworkErrorDialog = true
+        }
+    }
 
     val btnSize = 45.dp
 

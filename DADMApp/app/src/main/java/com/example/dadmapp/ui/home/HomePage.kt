@@ -90,7 +90,7 @@ fun HomePage(
     onRecordAudio: () -> Unit,
     onLogOut: () -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
 
@@ -119,7 +119,7 @@ fun HomePage(
                 ) {
                     Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = Color.White)
                     Text(
-                        text = "cristobalszk",
+                        text = homePageViewModel.username ?: "",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold
                     )
