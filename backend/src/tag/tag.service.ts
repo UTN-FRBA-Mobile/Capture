@@ -26,6 +26,23 @@ export class TagService {
     return Promise.all(promises);
   }
 
+  async clearTagsWithNoNotesForUser(username: string) {
+    const tags = await this.tagModel.findAll({
+      where: { username },
+      include: 'notes',
+    });
+
+    const promises = tags.map(async (t) => {
+      if (t.notes.length === 0) {
+        await t.destroy();
+      } else {
+        return Promise.resolve();
+      }
+    });
+
+    await Promise.all(promises);
+  }
+
   async updateColours(username: string, tags: Map<string, string>) {
     const promises = Object.entries(tags).map(async ([noteName, colour]) => {
       const note = await this.tagModel.findOne({

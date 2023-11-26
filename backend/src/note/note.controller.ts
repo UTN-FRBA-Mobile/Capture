@@ -87,8 +87,8 @@ export class NoteController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string | number) {
-    return this.noteService.delete(id);
+  delete(@User() jwtUser: JwtPayload, @Param('id') id: string | number) {
+    return this.noteService.delete(jwtUser.username, id);
   }
 
   @Put(':id')

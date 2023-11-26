@@ -42,8 +42,9 @@ export class NoteService {
     });
   }
 
-  async delete(id: string | number) {
+  async delete(username: string, id: string | number) {
     await this.noteModel.destroy({ where: { id } });
+    await this.tagService.clearTagsWithNoNotesForUser(username);
   }
 
   async update(username: string, dto: UpdateNoteDto, id: string | number) {
@@ -67,6 +68,7 @@ export class NoteService {
     }
 
     await note.save();
+    await this.tagService.clearTagsWithNoNotesForUser(username);
 
     return this.noteModel.findByPk(id, { include: 'tags' });
   }
