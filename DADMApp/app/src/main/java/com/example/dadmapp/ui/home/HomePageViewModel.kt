@@ -20,11 +20,12 @@ import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 class HomePageViewModel(
     private val noteRepository: NoteRepository,
     private val userRepository: UserRepository
-): ViewModel() {
+) : ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var tags: MutableStateFlow<List<Tag>>? = MutableStateFlow(emptyList())
     var selectedNoteId by mutableStateOf<String?>(null)
@@ -54,21 +55,44 @@ class HomePageViewModel(
         }
     }
 
-    fun onNewNote() {
+    fun onNewNote(
+        onIOException: () -> Unit,
+        onStartLoading: () -> Unit = {},
+        onEndLoading: () -> Unit = {}
+    ) {
         viewModelScope.launch {
-            val newNote = noteRepository.createNote()
-            selectedNoteId = newNote.id.toString()
+            try {
+                onStartLoading()
+                val newNote = noteRepository.createNote()
+                selectedNoteId = newNote.id.toString()
+            } catch (e: IOException) {
+                onIOException()
+            } finally {
+                onEndLoading()
+            }
         }
     }
 
-    fun onNewNoteFromImage(img: InputImage) {
+    fun onNewNoteFromImage(
+        img: InputImage,
+        onIOException: () -> Unit,
+        onStartLoading: () -> Unit = {},
+        onEndLoading: () -> Unit = {}
+    ) {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
         recognizer.process(img)
             .addOnSuccessListener { text ->
                 if (img.bitmapInternal != null) {
                     viewModelScope.launch {
-                        noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
+                        try {
+                            onStartLoading()
+                            noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
+                        } catch (e: IOException) {
+                            onIOException()
+                        } finally {
+                            onEndLoading()
+                        }
                     }
                 }
             }

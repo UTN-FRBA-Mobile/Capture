@@ -1,6 +1,7 @@
 package com.example.dadmapp.ui.note
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,6 +24,7 @@ import androidx.compose.material.icons.outlined.Create
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +34,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,6 +63,7 @@ import com.example.dadmapp.LOCALHOST_URL
 import com.example.dadmapp.R
 import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.components.AudioPlayer
+import com.example.dadmapp.ui.components.NetworkErrorDialog
 import com.example.dadmapp.ui.components.TagButton
 import com.example.dadmapp.ui.theme.BgDark
 import com.example.dadmapp.ui.theme.LightRed
@@ -64,6 +71,7 @@ import com.example.dadmapp.utils.formattedDateStr
 import com.example.dadmapp.utils.formattedTimeStr
 import dev.jeziellago.compose.markdowntext.MarkdownText
 import kotlinx.coroutines.launch
+import java.io.IOException
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,12 +82,15 @@ fun NotePage(
     noteId: String
 ) {
     val coroutineScope = rememberCoroutineScope()
+
     val note = notePageViewModel.getNote(noteId)
 
     var tags by remember { mutableStateOf(note.tags) }
     var newTag by rememberSaveable { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
 
     var showDialog by remember { mutableStateOf(false) }
+    var showNetworkErrorDialog by remember { mutableStateOf(false) }
 
     var titleVal by remember {
         mutableStateOf(note.title)
@@ -96,20 +107,39 @@ fun NotePage(
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     fun onDeleteNote() {
+
         coroutineScope.launch {
-            notePageViewModel.deleteNote(noteId)
-            onBackClick()
+            try {
+                isLoading = true
+                notePageViewModel.deleteNote(noteId)
+                onBackClick()
+            } catch (e: IOException) {
+                showNetworkErrorDialog = true
+            } finally {
+                isLoading = false
+            }
+
         }
     }
 
     fun onBack() {
         coroutineScope.launch {
-            if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
-                notePageViewModel.deleteNote(noteId)
-            } else {
-                notePageViewModel.updateNote(noteId, titleVal, contentVal, tags)
+
+            try {
+                isLoading = true
+                if (titleVal.isNullOrEmpty() && contentVal.isNullOrEmpty()) {
+                    notePageViewModel.deleteNote(noteId)
+                } else {
+                    notePageViewModel.updateNote(noteId, titleVal, contentVal, tags)
+                }
+                onBackClick()
+
+            } catch (e: IOException) {
+                showNetworkErrorDialog = true
+            } finally {
+                isLoading = false
             }
-            onBackClick()
+
         }
     }
 
@@ -123,7 +153,11 @@ fun NotePage(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { onBack() }) {
+                IconButton(onClick = {
+
+                    onBack()
+
+                }) {
                     Icon(
                         Icons.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.BACK_ICON),
@@ -159,7 +193,12 @@ fun NotePage(
                     }
 
                     tags.forEach { tag ->
-                        TagButton(tag = tag, onClick = { tags -= tag }, showDeletable = editMode, enabled = editMode)
+                        TagButton(
+                            tag = tag,
+                            onClick = { tags -= tag },
+                            showDeletable = editMode,
+                            enabled = editMode
+                        )
                     }
                 }
 
@@ -169,7 +208,9 @@ fun NotePage(
                 ) {
                     IconButton(onClick = { editMode = !editMode }) {
                         Icon(
-                            if (editMode) painterResource(id = R.drawable.baseline_edit_24) else painterResource(id = R.drawable.baseline_edit_off_24),
+                            if (editMode) painterResource(id = R.drawable.baseline_edit_24) else painterResource(
+                                id = R.drawable.baseline_edit_off_24
+                            ),
                             contentDescription = stringResource(R.string.EDIT_NOTE),
                             tint = if (editMode) Color.White else Color.Gray
                         )
@@ -256,7 +297,15 @@ fun NotePage(
                 }
             }
 
-
+            if (isLoading) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
 
             if (showDialog) {
                 AlertDialog(
@@ -281,7 +330,9 @@ fun NotePage(
                         ) { Text("Add") }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showDialog = false }) { Text(stringResource(R.string.CANCEL)) }
+                        TextButton(onClick = {
+                            showDialog = false
+                        }) { Text(stringResource(R.string.CANCEL)) }
                     }
                 )
             }
@@ -291,11 +342,15 @@ fun NotePage(
                 onDismiss = { showDeleteDialog = false },
                 onConfirm = { onDeleteNote() }
             )
+
+            NetworkErrorDialog(
+                show = showNetworkErrorDialog,
+                onDismiss = { showNetworkErrorDialog = false }
+            )
+
         }
     }
 }
-
-
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -310,7 +365,13 @@ fun TitleTextField(
     TextField(
         value = value,
         singleLine = true,
-        placeholder = { Text(text = stringResource(R.string.TITLE), fontWeight = FontWeight.Bold, fontSize = fontSize) },
+        placeholder = {
+            Text(
+                text = stringResource(R.string.TITLE),
+                fontWeight = FontWeight.Bold,
+                fontSize = fontSize
+            )
+        },
         onValueChange = { onTitleChange(it) },
         colors = TextFieldDefaults.textFieldColors(
             focusedTextColor = Color.White,
@@ -336,7 +397,12 @@ fun ContentTextField(value: String, onContentChange: (newContent: String) -> Uni
     TextField(
         value = value,
         onValueChange = { onContentChange(it) },
-        placeholder = { Text(text = stringResource(R.string.WRITE_SOMETHING), fontSize = fontSize) },
+        placeholder = {
+            Text(
+                text = stringResource(R.string.WRITE_SOMETHING),
+                fontSize = fontSize
+            )
+        },
         colors = TextFieldDefaults.textFieldColors(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
