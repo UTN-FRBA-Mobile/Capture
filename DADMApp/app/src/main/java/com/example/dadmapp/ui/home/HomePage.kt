@@ -90,7 +90,7 @@ fun HomePage(
     onRecordAudio: () -> Unit,
     onLogOut: () -> Unit
 ) {
-    val drawerState = rememberDrawerState(initialValue = DrawerValue.Open)
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
     val scope = rememberCoroutineScope()
 

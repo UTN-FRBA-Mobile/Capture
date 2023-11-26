@@ -41,9 +41,12 @@ fun FloatingButton(
 
     var showOptions by remember { mutableStateOf(false) }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetMultipleContents()) {
-            urlList ->
-        val uri = urlList[0]
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+            uri ->
+        if (uri == null) {
+            return@rememberLauncherForActivityResult
+        }
+
         val img = InputImage.fromFilePath(ctx, uri)
 
         homePageViewModel.onNewNoteFromImage(img)
