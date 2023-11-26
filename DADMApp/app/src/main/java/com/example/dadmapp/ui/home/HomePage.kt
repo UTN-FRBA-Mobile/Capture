@@ -7,10 +7,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.layout.width
@@ -20,8 +22,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -30,6 +35,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
@@ -41,12 +47,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dadmapp.R
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.ui.components.NotePreview
@@ -54,6 +63,7 @@ import com.example.dadmapp.ui.home.components.FloatingButton
 import com.example.dadmapp.ui.home.components.TopBar
 import com.example.dadmapp.ui.theme.AccentRed1
 import com.example.dadmapp.ui.theme.BgDark
+import com.example.dadmapp.ui.theme.LightRed
 import kotlinx.coroutines.launch
 
 fun shouldDisplayNote(
@@ -81,7 +91,6 @@ fun shouldDisplayNote(
     return true
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun HomePage(
@@ -95,6 +104,8 @@ fun HomePage(
 
     val scope = rememberCoroutineScope()
 
+    val tagIconSize = 14.dp
+
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = { 
@@ -105,48 +116,66 @@ fun HomePage(
                     .fillMaxHeight()
             ) {
                 Row(
-                    modifier = Modifier.padding(vertical = 10.dp)
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .padding(start = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = Color.White)
+                    Column(modifier = Modifier.padding(start = 12.dp)) {
+                        Text(
+                            text = homePageViewModel.username ?: "",
+                            color = Color.White,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+                Divider(
+                    color = LightRed,
+                    thickness = 1.dp,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Row(
+                    modifier = Modifier
+                        .padding(start = 10.dp)
+                        .padding(vertical = 12.dp)
+                        .fillMaxWidth()
+                        .clickable { onTagsColoursClick() },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painterResource(id = R.drawable.tag),
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.width(tagIconSize).height(tagIconSize)
+                    )
                     Text(
-                        text = "Notes app",
+                        text = "Customize tags",
                         color = Color.White,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp
+                        modifier = Modifier.padding(start = 8.dp),
+                        textAlign = TextAlign.Left
                     )
                 }
                 Row(
                     modifier = Modifier
-                        .padding(vertical = 10.dp)
+                        .padding(start = 10.dp)
+                        .padding(vertical = 12.dp)
+                        .fillMaxWidth()
+                        .clickable { homePageViewModel.onLogOut(onLogOut) },
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(Icons.Filled.AccountCircle, contentDescription = null, tint = Color.White)
+                    Icon(
+                        Icons.Filled.ExitToApp,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.width(tagIconSize).height(tagIconSize)
+                    )
                     Text(
-                        text = homePageViewModel.username ?: "",
+                        text = "Log out",
                         color = Color.White,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-                Row {
-                    ClickableText(
-                        text = AnnotatedString(
-                            "Tags colours"
-                        ),
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp
-                        ),
-                        onClick = { onTagsColoursClick() }
-                    )
-                }
-                Row {
-                    ClickableText(
-                        text = AnnotatedString(
-                            "Log out"
-                        ),
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp
-                        ),
-                        onClick = { homePageViewModel.onLogOut(onLogOut) }
+                        modifier = Modifier.padding(start = 8.dp),
+                        textAlign = TextAlign.Left
                     )
                 }
             }
