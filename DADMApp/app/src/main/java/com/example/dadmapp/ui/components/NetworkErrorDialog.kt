@@ -17,9 +17,8 @@ fun NetworkErrorDialog(
                 TextButton(onClick = { onDismiss() }) {
                     Text(text = "Try again")
                 }
-
             },
-            title = { Text(text = "There's been a network arror") }
+            title = { Text(text = "There's been a network error") }
         )
     }
 }
