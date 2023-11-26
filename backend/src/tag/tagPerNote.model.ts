@@ -10,5 +10,5 @@ export class TagPerNote extends Model {
 
   @ForeignKey(() => Tag)
   @Column
-  tagName: string;
+  tagId: number;
 }

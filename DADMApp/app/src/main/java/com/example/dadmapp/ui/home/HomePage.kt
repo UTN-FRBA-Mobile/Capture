@@ -88,7 +88,8 @@ fun HomePage(
     onNoteClick: (noteId: String) -> Unit,
     homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory),
     onRecordAudio: () -> Unit,
-    onLogOut: () -> Unit
+    onLogOut: () -> Unit,
+    onTagsColoursClick: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
@@ -122,6 +123,18 @@ fun HomePage(
                         text = homePageViewModel.username ?: "",
                         color = Color.White,
                         fontWeight = FontWeight.SemiBold
+                    )
+                }
+                Row {
+                    ClickableText(
+                        text = AnnotatedString(
+                            "Tags colours"
+                        ),
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 12.sp
+                        ),
+                        onClick = { onTagsColoursClick() }
                     )
                 }
                 Row {
@@ -165,7 +178,7 @@ fun PageContent(
     onNoteClick: (noteId: String) -> Unit,
     homePageViewModel: HomePageViewModel = viewModel(factory = HomePageViewModel.Factory),
     onRecordAudio: () -> Unit,
-    onDrawerStateChange: () -> Unit
+    onDrawerStateChange: () -> Unit,
 ) {
     if (homePageViewModel.selectedNoteId != null) {
         LaunchedEffect(Unit) {

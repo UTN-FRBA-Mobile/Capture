@@ -26,7 +26,7 @@ class HomePageViewModel(
     private val userRepository: UserRepository
 ): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
-    var tags: List<Tag> = emptyList()
+    var tags: MutableStateFlow<List<Tag>>? = MutableStateFlow(emptyList())
     var selectedNoteId by mutableStateOf<String?>(null)
     var filterByTags: List<Tag> by mutableStateOf(emptyList())
     var searchTerm by mutableStateOf<String?>(null)
@@ -50,7 +50,7 @@ class HomePageViewModel(
     private fun loadNotes() {
         viewModelScope.launch {
             notes = noteRepository.loadNotes()
-            tags = noteRepository.loadNotes().value.map { n -> n.tags }.flatten().distinct()
+            tags = noteRepository.getTags()
         }
     }
 

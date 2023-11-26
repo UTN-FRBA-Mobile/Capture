@@ -20,6 +20,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,7 +43,7 @@ fun TopBar(
     homePageViewModel: HomePageViewModel,
     onDrawerStateChange: () -> Unit
 ) {
-    val allTags = homePageViewModel.tags
+    val allTags = homePageViewModel.tags?.collectAsState()
 
     fun toggleTag(tag: Tag) {
         homePageViewModel.filterByTags = if (homePageViewModel.filterByTags.contains(tag)) {
@@ -94,7 +95,8 @@ fun TopBar(
                         )
                     }
                     FilterMenu(
-                        allTags = allTags,
+                        // allTags = allTags.value,
+                        allTags = allTags?.value ?: emptyList(),
                         filterByTags = homePageViewModel.filterByTags,
                         toggleTag = { tag -> toggleTag(tag) },
                     )
@@ -147,7 +149,9 @@ fun TopSearchBar(
         },
         colors = TextFieldDefaults.textFieldColors(
             containerColor = AccentRed1,
-            textColor = Color.White
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            disabledTextColor = Color.Gray
         )
     )
 }

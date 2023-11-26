@@ -115,7 +115,6 @@ fun NotePage(
 
     Scaffold(
         containerColor = BgDark,
-
         topBar = {
             Row(
                 modifier = Modifier
@@ -274,7 +273,7 @@ fun NotePage(
                         TextButton(
                             onClick = {
                                 if (newTag.isNotBlank()) {
-                                    tags = tags + Tag(name = newTag, createdAt = "", updatedAt = "")
+                                    tags = tags + Tag(name = newTag)
                                     newTag = ""
                                     showDialog = false
                                 }
@@ -314,7 +313,9 @@ fun TitleTextField(
         placeholder = { Text(text = stringResource(R.string.TITLE), fontWeight = FontWeight.Bold, fontSize = fontSize) },
         onValueChange = { onTitleChange(it) },
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            disabledTextColor = Color.Gray,
             containerColor = BgDark,
             focusedLabelColor = LightRed,
             focusedIndicatorColor = Color.Transparent,
@@ -337,7 +338,9 @@ fun ContentTextField(value: String, onContentChange: (newContent: String) -> Uni
         onValueChange = { onContentChange(it) },
         placeholder = { Text(text = stringResource(R.string.WRITE_SOMETHING), fontSize = fontSize) },
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            disabledTextColor = Color.Gray,
             containerColor = BgDark,
             focusedLabelColor = LightRed,
             focusedIndicatorColor = Color.Transparent,

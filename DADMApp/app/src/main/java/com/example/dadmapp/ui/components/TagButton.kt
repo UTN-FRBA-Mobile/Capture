@@ -1,5 +1,6 @@
 package com.example.dadmapp.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -18,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.ui.res.stringResource
 import com.example.dadmapp.R
+import com.example.dadmapp.utils.hexColorToObj
 
 @Composable
 fun TagButton(
@@ -27,6 +29,10 @@ fun TagButton(
     enabled: Boolean,
     onClick: () -> Unit = {},
 ) {
+    val colour = if (tag.colour != null) hexColorToObj(tag.colour) else AccentRed1
+
+    val textColour = getTint(colour);
+
     Button(
         onClick = { onClick() },
         shape = RoundedCornerShape(50),
@@ -34,8 +40,8 @@ fun TagButton(
             .height(24.dp)
             .padding(end = 4.dp),
         colors = ButtonDefaults.buttonColors(
-            containerColor = AccentRed1,
-            disabledContainerColor = AccentRed1,
+            containerColor = colour,
+            disabledContainerColor = colour,
             contentColor = Color.White,
             disabledContentColor = Color.Gray
         ),
@@ -46,14 +52,26 @@ fun TagButton(
         enabled = enabled
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "#${tag.name.uppercase()}", fontSize = 12.sp)
+            Text(text = "#${tag.name}", fontSize = 12.sp, color = textColour)
             if (showDeletable) {
                 Icon(
                     imageVector = Icons.Filled.Close,
                     contentDescription = stringResource(R.string.DELETE_TAG),
-                    tint = Color.White,
+                    tint = textColour,
                 )
             }
         }
     }
+}
+
+fun getTint(bgColor: Color): Color {
+    val red = bgColor.red * 255
+    val green = bgColor.green * 255
+    val blue = bgColor.blue * 255
+
+    if ((red * 0.299 + green * 0.587 + blue * 0.114) > 150) {
+        return Color.Black
+    }
+
+    return Color.White
 }

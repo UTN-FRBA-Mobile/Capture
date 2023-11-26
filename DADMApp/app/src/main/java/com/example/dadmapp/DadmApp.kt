@@ -22,6 +22,7 @@ import com.example.dadmapp.ui.login.LoginPage
 import com.example.dadmapp.ui.note.NotePage
 import com.example.dadmapp.ui.recordAudio.RecordAudioPage
 import com.example.dadmapp.ui.signup.SignUpPage
+import com.example.dadmapp.ui.tags.TagsColours
 import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
@@ -74,9 +75,8 @@ fun DadmApp(
                     { noteId: String -> navController.navigate("note/$noteId") },
                     vm,
                     { navController.navigate("recordAudio") },
-                    {
-                        navController.navigate(RouteState.Login.title)
-                    }
+                    { navController.navigate(RouteState.Login.title) },
+                    { navController.navigate("tagsColours") }
                 )
             }
 
@@ -97,6 +97,10 @@ fun DadmApp(
                     onCreatedNote = { noteId -> navController.navigate("note/$noteId") },
                     onBack = { navController.navigate(RouteState.Home.title) }
                 )
+            }
+
+            composable("tagsColours") {
+                TagsColours(onBack = { navController.navigate(RouteState.Home.title) })
             }
         }
     }

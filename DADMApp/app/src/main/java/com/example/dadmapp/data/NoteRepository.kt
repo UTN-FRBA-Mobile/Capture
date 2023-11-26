@@ -2,10 +2,12 @@ package com.example.dadmapp.data
 
 import android.graphics.Bitmap
 import android.util.Log
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
 import com.example.dadmapp.network.NoteApiService
 import com.example.dadmapp.network.body.UpdateNoteBody
+import com.example.dadmapp.network.body.UpdateTagsColoursBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -16,13 +18,15 @@ import java.io.File
 import java.time.Instant
 
 interface NoteRepository {
-    suspend fun loadNotes(): MutableStateFlow<List<Note>>
+    suspend fun loadNotes(forceLoad: Boolean = false): MutableStateFlow<List<Note>>
     fun getNoteById(id: String): Note
+    fun getTags(): MutableStateFlow<List<Tag>>
     suspend fun createNote(): Note
     suspend fun createNoteFromFile(image: Bitmap, imgText: String): Note
     suspend fun createNoteFromAudio(audio: File, text: String): Note
     suspend fun deleteNote(id: String)
     suspend fun updateNote(id: String, title: String?, content: String?, tags: List<Tag>)
+    suspend fun updateTagsColours(edits: Map<String, String>)
     fun clear()
 }
 
@@ -31,22 +35,40 @@ class NetworkNoteRepository(
 ): NoteRepository {
     private var notesLoaded = false
     private var notes = MutableStateFlow(emptyList<Note>())
+    private val tags = MutableStateFlow(emptyList<Tag>())
+
+    override fun getTags(): MutableStateFlow<List<Tag>> {
+        return tags
+    }
+
+    override suspend fun updateTagsColours(edits: Map<String, String>) {
+        noteApiService.updateColours(UpdateTagsColoursBody(edits))
+        loadNotes(true)
+    }
 
     override fun clear() {
         notesLoaded = false
         notes.update { emptyList() }
+        tags.update { emptyList() }
     }
 
-    override suspend fun loadNotes(): MutableStateFlow<List<Note>> {
-        if (notesLoaded) {
+    private fun updateTags() {
+        tags.update {
+            notes.value.map { n -> n.tags }.flatten().distinct()
+        }
+    }
+
+    override suspend fun loadNotes(forceLoad: Boolean): MutableStateFlow<List<Note>> {
+        if (notesLoaded && !forceLoad) {
             Log.d("INFO", "Notes already loaded")
             return notes
         }
 
-        Log.d("INFO", "Notes not loaded. Loading again")
+        Log.d("INFO", "Notes not loaded or force load. Loading again")
 
         val newNotes = noteApiService.loadNotes()
         notes.update { newNotes }
+        updateTags()
         notesLoaded = true
         return notes
     }
@@ -58,12 +80,15 @@ class NetworkNoteRepository(
             throw Exception("Tried to retrieve note that does not exist")
         }
 
+        updateTags()
+
         return r
     }
 
     override suspend fun createNote(): Note {
         val note = noteApiService.createNote()
         notes.update { notes -> notes + note }
+        updateTags()
         return note
     }
 
@@ -88,6 +113,7 @@ class NetworkNoteRepository(
 
         val note = noteApiService.createNoteFromImage(textData, bodyPart)
         notes.update { notes -> notes + note }
+        updateTags()
         return note
     }
 
@@ -110,12 +136,14 @@ class NetworkNoteRepository(
 
         val note = noteApiService.createNoteFromAudio(audioData, bodyPart)
         notes.update { notes -> notes + note }
+        updateTags()
         return note
     }
 
     override suspend fun deleteNote(id: String) {
         noteApiService.deleteNote(id);
         notes.update { notes -> notes.filter { n -> n.id.toString() != id } }
+        updateTags()
     }
 
     override suspend fun updateNote(
@@ -127,19 +155,16 @@ class NetworkNoteRepository(
         val bodyTitle = title ?: ""
         val bodyContent = content ?: ""
         val body = UpdateNoteBody(bodyTitle, bodyContent, tags.map { t -> t.name })
-        noteApiService.updateNote(id, body)
+        val updatedNote = noteApiService.updateNote(id, body)
+        Log.d("INFO", updatedNote.toString())
         notes.update { arr -> arr.map {
                 n ->
                 if (n.id.toString() == id) {
-                    n.copy(
-                        title = bodyTitle,
-                        content = bodyContent,
-                        tags = tags,
-                        updatedAt = Instant.now().toString()
-                    )
+                    return@map updatedNote
                 } else {
-                    n
+                    return@map n
                 }
         } }
+        updateTags()
     }
 }

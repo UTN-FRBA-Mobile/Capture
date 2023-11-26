@@ -2,6 +2,7 @@ package com.example.dadmapp.network
 
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.network.body.UpdateNoteBody
+import com.example.dadmapp.network.body.UpdateTagsColoursBody
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Body
@@ -38,5 +39,8 @@ interface NoteApiService {
     suspend fun deleteNote(@Path("id") id: String)
 
     @PUT("note/{id}")
-    suspend fun updateNote(@Path("id") id: String, @Body body: UpdateNoteBody)
+    suspend fun updateNote(@Path("id") id: String, @Body body: UpdateNoteBody): Note
+
+    @POST("note/tags/colors")
+    suspend fun updateColours(@Body body: UpdateTagsColoursBody)
 }

@@ -35,7 +35,9 @@ fun CustomTextField(
             .border(2.dp, AccentRed1, shape = RoundedCornerShape(10.dp)),
         label = { Text(text = label) },
         colors = TextFieldDefaults.textFieldColors(
-            textColor = Color.White,
+            focusedTextColor = Color.White,
+            unfocusedTextColor = Color.White,
+            disabledTextColor = Color.Gray,
             containerColor = BgDark,
             focusedLabelColor = LightRed,
             focusedIndicatorColor = Color.Transparent,

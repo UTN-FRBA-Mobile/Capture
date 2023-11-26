@@ -2,17 +2,21 @@ import {
   Table,
   Model,
   Column,
-  PrimaryKey,
   BelongsToMany,
+  ForeignKey,
 } from 'sequelize-typescript';
 import { Note } from '../note/note.model';
 import { TagPerNote } from './tagPerNote.model';
+import { User } from '../users/user.model';
 
-@Table({ timestamps: true })
+@Table({ timestamps: false })
 export class Tag extends Model {
-  @PrimaryKey
   @Column
   name: string;
+
+  @ForeignKey(() => User)
+  @Column
+  username: string;
 
   @Column
   colour: string;

@@ -20,11 +20,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
 import { diskStorage } from 'multer';
 import { v4 as uuidv4 } from 'uuid';
+import { TagService } from '../tag/tag.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('note')
 export class NoteController {
-  constructor(private noteService: NoteService) {}
+  constructor(
+    private noteService: NoteService,
+    private readonly tagService: TagService,
+  ) {}
 
   @Post('create')
   create(@User() jwtUser: JwtPayload, @Body() newNoteDto: NewNoteDto) {
@@ -88,7 +92,19 @@ export class NoteController {
   }
 
   @Put(':id')
-  update(@Body() dto: UpdateNoteDto, @Param('id') id: string | number) {
-    return this.noteService.update(dto, id);
+  update(
+    @User() jwtUser: JwtPayload,
+    @Body() dto: UpdateNoteDto,
+    @Param('id') id: string | number,
+  ) {
+    return this.noteService.update(jwtUser.username, dto, id);
+  }
+
+  @Post('tags/colors')
+  updateTags(
+    @User() jwtUser: JwtPayload,
+    @Body() data: { data: Map<string, string> },
+  ) {
+    return this.tagService.updateColours(jwtUser.username, data.data);
   }
 }

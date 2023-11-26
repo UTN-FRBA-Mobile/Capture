@@ -91,5 +91,5 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
 
     implementation("com.github.jeziellago:compose-markdown:0.3.6")
-
+    implementation("com.github.skydoves:colorpicker-compose:1.0.5")
 }
