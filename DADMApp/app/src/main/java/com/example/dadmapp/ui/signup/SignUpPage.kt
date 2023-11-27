@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.R
@@ -85,7 +86,7 @@ fun SignUpPage(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CustomTextField(label = "Username", value = username, onValueChange = { username = it })
+        CustomTextField(label = "Username", value = username, onValueChange = { username = it }, imeAction = ImeAction.Next)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -94,6 +95,7 @@ fun SignUpPage(
             value = password,
             onValueChange = { password = it },
             isPassword = true,
+            imeAction = ImeAction.Next
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -103,6 +105,7 @@ fun SignUpPage(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             isPassword = true,
+            imeAction = ImeAction.Done
         )
 
         Spacer(modifier = Modifier.height(32.dp))

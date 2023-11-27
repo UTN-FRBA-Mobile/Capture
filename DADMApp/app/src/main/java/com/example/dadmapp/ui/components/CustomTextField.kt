@@ -10,6 +10,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -25,7 +26,8 @@ fun CustomTextField(
     label: String,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
+    imeAction: ImeAction
 ) {
     TextField(
         value = value,
@@ -44,8 +46,9 @@ fun CustomTextField(
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
         ),
-        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password) else KeyboardOptions(
-            keyboardType = KeyboardType.Text
+        keyboardOptions = if (isPassword) KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = imeAction) else KeyboardOptions(
+            keyboardType = KeyboardType.Text,
+            imeAction = imeAction
         ),
         visualTransformation = if (isPassword) PasswordVisualTransformation() else VisualTransformation.None,
         singleLine = singleLine,

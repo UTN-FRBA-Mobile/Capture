@@ -59,6 +59,7 @@ class NetworkUserRepository(
     override suspend fun signUp(username: String, password: String) {
         val body = SignupRequest(username, password)
         authApiService.signUp(body)
+        login(username, password)
     }
 
 

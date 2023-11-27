@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.R
@@ -100,7 +101,7 @@ fun LoginPage(
         Row(
             modifier = Modifier.padding(10.dp)
         ) {
-            CustomTextField(label = stringResource(R.string.USERNAME), value = username, onValueChange = { username = it })
+            CustomTextField(label = stringResource(R.string.USERNAME), value = username, onValueChange = { username = it }, imeAction = ImeAction.Next)
         }
         Row(
             modifier = Modifier.padding(10.dp)
@@ -109,7 +110,8 @@ fun LoginPage(
                 label = stringResource(R.string.PASSWORD),
                 value = password,
                 onValueChange = { password = it },
-                isPassword = true
+                isPassword = true,
+                imeAction = ImeAction.Done
             )
         }
         Row(
