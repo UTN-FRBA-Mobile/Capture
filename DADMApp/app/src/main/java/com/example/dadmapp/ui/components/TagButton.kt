@@ -52,7 +52,7 @@ fun TagButton(
         enabled = enabled
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "#${tag.name}", fontSize = 12.sp, color = textColour)
+            Text(text = tag.name, fontSize = 12.sp, color = textColour)
             if (showDeletable) {
                 Icon(
                     imageVector = Icons.Filled.Close,

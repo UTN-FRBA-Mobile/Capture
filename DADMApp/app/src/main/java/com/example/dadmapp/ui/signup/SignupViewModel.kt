@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
 class SignUpViewModel(private val userRepository: UserRepository) : ViewModel() {
-
     private val _registered = MutableStateFlow(false)
     val registered: StateFlow<Boolean> = _registered
 

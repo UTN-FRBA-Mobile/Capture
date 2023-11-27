@@ -15,6 +15,7 @@ import retrofit2.Retrofit
 interface AppContainer {
     val userRepository: UserRepository
     val noteRepository: NoteRepository
+    val fatalErrorHandler: FatalErrorHandler
 }
 
 private val json = Json {
@@ -48,6 +49,13 @@ class DefaultAppContainer(dataStore: DataStore<Preferences>): AppContainer {
 
     override val noteRepository: NoteRepository by lazy {
         NetworkNoteRepository(noteApiService)
+    }
+
+    override val fatalErrorHandler: FatalErrorHandler by lazy {
+        FatalErrorHandler(
+            userRepository,
+            noteRepository
+        )
     }
 
     companion object {

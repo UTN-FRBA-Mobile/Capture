@@ -1,5 +1,6 @@
 package com.example.dadmapp.ui.login
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,12 +31,18 @@ import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.CustomButton
 import com.example.dadmapp.ui.components.CustomTextField
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun LoginPage(
     onLogin: () -> Unit,
-    onNavigateToRegister: () -> Unit
+    onNavigateToRegister: () -> Unit,
+    fatalError: Boolean
 ) {
     val viewModel: LoginViewModel = viewModel(factory = LoginViewModel.Factory)
+
+    var showFatalError by remember {
+        mutableStateOf(fatalError)
+    }
 
     if (viewModel.logged) {
         LaunchedEffect(Unit) {
@@ -65,6 +72,19 @@ fun LoginPage(
             text = { Text(text = viewModel.loginError ?: "") },
             confirmButton = {
                 TextButton(onClick = { viewModel.loginError = null }) {
+                    Text(stringResource(R.string.Ok))
+                }
+            }
+        )
+    }
+
+    if (showFatalError) {
+        AlertDialog(
+            onDismissRequest = { showFatalError = false },
+            title = { Text(text = stringResource(R.string.FATAL_ERROR)) },
+            text = { Text(text = stringResource(R.string.FATAL_ERROR_TEXT)) },
+            confirmButton = {
+                TextButton(onClick = { showFatalError = false }) {
                     Text(stringResource(R.string.Ok))
                 }
             }

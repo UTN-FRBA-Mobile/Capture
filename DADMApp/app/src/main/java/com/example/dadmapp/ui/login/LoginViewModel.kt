@@ -13,10 +13,15 @@ import com.example.dadmapp.data.UserRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.FatalErrorHandler
 import com.example.dadmapp.exceptions.LoginException
+import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.HttpException
 
-class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
+class LoginViewModel(
+    private val userRepository: UserRepository,
+    private val fatalErrorHandler: FatalErrorHandler
+): ViewModel() {
     var logged by mutableStateOf(false)
     var loginError by mutableStateOf<String?>(null)
 
@@ -58,7 +63,8 @@ class LoginViewModel(private val userRepository: UserRepository): ViewModel() {
             initializer {
                 val application = (this[APPLICATION_KEY] as DADMAppApplication)
                 val userRepository = application.container.userRepository
-                LoginViewModel(userRepository = userRepository)
+                val fatalErrorHandler = application.container.fatalErrorHandler
+                LoginViewModel(userRepository, fatalErrorHandler)
             }
         }
     }

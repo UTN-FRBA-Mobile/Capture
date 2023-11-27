@@ -115,7 +115,7 @@ fun NotePreview(
                     )
                 }
                 Row(
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 10.dp),
+                    modifier = Modifier.padding(vertical = 10.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 )

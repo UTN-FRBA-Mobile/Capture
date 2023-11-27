@@ -2,9 +2,9 @@ package com.example.dadmapp
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,14 +27,13 @@ import com.example.dadmapp.ui.theme.BgDark
 
 enum class RouteState(val title: String) {
     ApplicationOpened("ApplicationOpened"),
-    Login("Login"),
+    Login("Login?fatalError={fatalError}"),
     Home("Home"),
     SignUp("SignUp")
 }
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DadmApp(
     navController: NavHostController = rememberNavController(),
@@ -52,14 +51,31 @@ fun DadmApp(
             composable(RouteState.ApplicationOpened.title) {
                 ApplicationOpened(
                     onLogin = { navController.navigate(RouteState.Home.title) },
-                    onFailure = { navController.navigate(RouteState.Login.title) }
+                    onFailure = { navController.navigate(RouteState.Login.title) },
+                    onFatalErrorHandler = {
+                        navController.navigate(
+                            RouteState.Login.title
+                                .replace("{fatalError}", "true")
+                        )
+                    }
                 )
             }
 
-            composable(RouteState.Login.title) {
+            composable(
+                RouteState.Login.title,
+                arguments = listOf(navArgument("fatalError") { defaultValue = "false" })
+            ) {
+                val s = it.arguments?.getString("fatalError")
+                if (s != null) {
+                    Log.d("INFO", s)
+                    Log.d("INFO", s.toBoolean().toString())
+                } else {
+                    Log.d("INFO", "No arg")
+                }
                 LoginPage(
                     onLogin = { navController.navigate(RouteState.Home.title) },
-                    onNavigateToRegister = { navController.navigate(RouteState.SignUp.title) }
+                    onNavigateToRegister = { navController.navigate(RouteState.SignUp.title) },
+                    fatalError = it.arguments?.getString("fatalError").toBoolean()
                 )
             }
 

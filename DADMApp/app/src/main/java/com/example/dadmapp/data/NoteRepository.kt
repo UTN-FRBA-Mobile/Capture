@@ -80,8 +80,6 @@ class NetworkNoteRepository(
             throw Exception("Tried to retrieve note that does not exist")
         }
 
-        updateTags()
-
         return r
     }
 

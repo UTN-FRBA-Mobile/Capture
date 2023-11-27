@@ -15,14 +15,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.dadmapp.data.FatalErrorHandler
 import com.example.dadmapp.ui.theme.LightRed
 
 @Composable
 fun ApplicationOpened(
     applicationOpenedViewmodel: ApplicationOpenedViewmodel = viewModel(factory = ApplicationOpenedViewmodel.Factory),
     onLogin: () -> Unit,
-    onFailure: () -> Unit
+    onFailure: () -> Unit,
+    onFatalErrorHandler: () -> Unit
 ) {
+    applicationOpenedViewmodel.setFatalErrorHandler(onFatalErrorHandler)
+
     LaunchedEffect(Unit) {
         applicationOpenedViewmodel.tryToLoadNotes()
     }

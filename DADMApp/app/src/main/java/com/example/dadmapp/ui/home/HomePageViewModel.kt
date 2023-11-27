@@ -12,6 +12,7 @@ import com.example.dadmapp.data.NoteRepository
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.FatalErrorHandler
 import com.example.dadmapp.data.UserRepository
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
@@ -23,7 +24,8 @@ import kotlinx.coroutines.launch
 
 class HomePageViewModel(
     private val noteRepository: NoteRepository,
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val fatalErrorHandler: FatalErrorHandler
 ): ViewModel() {
     var notes: MutableStateFlow<List<Note>>? = MutableStateFlow(emptyList())
     var tags: MutableStateFlow<List<Tag>>? = MutableStateFlow(emptyList())
@@ -49,15 +51,23 @@ class HomePageViewModel(
 
     private fun loadNotes() {
         viewModelScope.launch {
-            notes = noteRepository.loadNotes()
-            tags = noteRepository.getTags()
+            try {
+                notes = noteRepository.loadNotes()
+                tags = noteRepository.getTags()
+            } catch (e: Exception) {
+                fatalErrorHandler.executeHandler(e)
+            }
         }
     }
 
     fun onNewNote() {
         viewModelScope.launch {
-            val newNote = noteRepository.createNote()
-            selectedNoteId = newNote.id.toString()
+            try {
+                val newNote = noteRepository.createNote()
+                selectedNoteId = newNote.id.toString()
+            } catch (e: Exception) {
+                fatalErrorHandler.executeHandler(e)
+            }
         }
     }
 
@@ -68,7 +78,11 @@ class HomePageViewModel(
             .addOnSuccessListener { text ->
                 if (img.bitmapInternal != null) {
                     viewModelScope.launch {
-                        noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
+                        try {
+                            noteRepository.createNoteFromFile(img.bitmapInternal!!, text.text)
+                        } catch (e: Exception) {
+                            fatalErrorHandler.executeHandler(e)
+                        }
                     }
                 }
             }
@@ -80,7 +94,8 @@ class HomePageViewModel(
                 val application = (this[APPLICATION_KEY] as DADMAppApplication)
                 val noteRepository = application.container.noteRepository
                 val userRepository = application.container.userRepository
-                HomePageViewModel(noteRepository, userRepository)
+                val fatalErrorHandler = application.container.fatalErrorHandler
+                HomePageViewModel(noteRepository, userRepository, fatalErrorHandler)
             }
         }
     }

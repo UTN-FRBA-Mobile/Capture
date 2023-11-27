@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.FatalErrorHandler
 import com.example.dadmapp.data.NoteRepository
 import com.example.dadmapp.data.UserRepository
 import retrofit2.HttpException
@@ -21,9 +22,14 @@ enum class LoginState(val stateName: String) {
 
 class ApplicationOpenedViewmodel(
     private val userRepository: UserRepository,
-    private val noteRepository: NoteRepository
+    private val noteRepository: NoteRepository,
+    private val fatalErrorHandler: FatalErrorHandler
 ): ViewModel() {
     var loginState by mutableStateOf(LoginState.NOT_LOADED.stateName)
+
+    fun setFatalErrorHandler(handler: () -> Unit) {
+        fatalErrorHandler.setHandler(handler)
+    }
 
     suspend fun tryToLoadNotes() {
         if (!userRepository.hasExistingToken()) {
@@ -45,9 +51,11 @@ class ApplicationOpenedViewmodel(
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as DADMAppApplication)
                 val noteRepository = application.container.noteRepository
                 val userRepository = application.container.userRepository
+                val fatalErrorHandler = application.container.fatalErrorHandler
                 ApplicationOpenedViewmodel(
                     noteRepository = noteRepository,
-                    userRepository = userRepository
+                    userRepository = userRepository,
+                    fatalErrorHandler = fatalErrorHandler
                 )
             }
         }

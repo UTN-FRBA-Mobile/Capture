@@ -5,13 +5,21 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.dadmapp.DADMAppApplication
+import com.example.dadmapp.data.FatalErrorHandler
 import com.example.dadmapp.data.NoteRepository
 import com.example.dadmapp.model.note.Note
 import com.example.dadmapp.model.tag.Tag
 
-class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel() {
+class NotePageViewModel(
+    private val noteRepository: NoteRepository,
+    private val fatalErrorHandler: FatalErrorHandler
+): ViewModel() {
     suspend fun deleteNote(id: String) {
-        noteRepository.deleteNote(id)
+        try {
+            noteRepository.deleteNote(id)
+        } catch (e: Exception) {
+            fatalErrorHandler.executeHandler(e)
+        }
     }
 
     fun getNote(id: String): Note {
@@ -19,7 +27,11 @@ class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel()
     }
 
     suspend fun updateNote(noteId: String, title: String?, content: String?, tags: List<Tag>) {
-        noteRepository.updateNote(noteId, title, content, tags)
+        try {
+            noteRepository.updateNote(noteId, title, content, tags)
+        } catch (e: Exception) {
+            fatalErrorHandler.executeHandler(e)
+        }
     }
 
     companion object {
@@ -27,7 +39,8 @@ class NotePageViewModel(private val noteRepository: NoteRepository): ViewModel()
             initializer {
                 val application = (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as DADMAppApplication)
                 val noteRepository = application.container.noteRepository
-                NotePageViewModel(noteRepository)
+                val fatalErrorHandler = application.container.fatalErrorHandler
+                NotePageViewModel(noteRepository, fatalErrorHandler)
             }
         }
     }
