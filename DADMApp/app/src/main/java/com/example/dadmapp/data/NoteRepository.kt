@@ -68,6 +68,7 @@ class NetworkNoteRepository(
 
         val newNotes = noteApiService.loadNotes()
         notes.update { newNotes }
+        sortNotes()
         updateTags()
         notesLoaded = true
         return notes
@@ -86,6 +87,7 @@ class NetworkNoteRepository(
     override suspend fun createNote(): Note {
         val note = noteApiService.createNote()
         notes.update { notes -> notes + note }
+        sortNotes()
         updateTags()
         return note
     }
@@ -111,6 +113,7 @@ class NetworkNoteRepository(
 
         val note = noteApiService.createNoteFromImage(textData, bodyPart)
         notes.update { notes -> notes + note }
+        sortNotes()
         updateTags()
         return note
     }
@@ -134,6 +137,7 @@ class NetworkNoteRepository(
 
         val note = noteApiService.createNoteFromAudio(audioData, bodyPart)
         notes.update { notes -> notes + note }
+        sortNotes()
         updateTags()
         return note
     }
@@ -164,5 +168,9 @@ class NetworkNoteRepository(
                 }
         } }
         updateTags()
+    }
+
+    private fun sortNotes() {
+        notes.update { notes.value.sortedByDescending { it.id } }
     }
 }

@@ -20,7 +20,8 @@
     <string name="USERNAME">Username</string>
     <string name="PASSWORD">Password</string>
     <string name="LOGIN">Log in</string>
-    <string name="OR_SIGN_UP">or sign up!</string>
+    <string name="OR">or</string>
+    <string name="SIGN_UP">sign up!</string>
     <string name="ADD_NOTE_BUTTON">Add note button</string>
     <string name="WRITE">Write</string>
     <string name="CREATE_NOTE_WITH_TEXT">Create note with text</string>
@@ -39,4 +40,8 @@
     <string name="REQUEST_PERMISSION">Request permission</string>
     <string name="FATAL_ERROR">Fatal error</string>
     <string name="FATAL_ERROR_TEXT">An error occurred and the app was unable to continue. Check your internet connection and try again.</string>
+    <string name="INVALID_CREDENTIALS">Invalid credentials</string>
+    <string name="SIGNUP_ERROR">Signup error</string>
+    <string name="USERNAME_ALREADY_EXISTS">Username already exists</string>
+    <string name="PASSWORDS_DO_NOT_MATCH">Passwords do not match!</string>
 </resources>

@@ -80,9 +80,10 @@ fun DadmApp(
             }
 
             composable(RouteState.SignUp.title) {
-                SignUpPage(onSingUp = {
-                    navController.navigate(RouteState.Home.title)
-                })
+                SignUpPage(
+                    { navController.navigate(RouteState.Home.title) },
+                    { navController.navigate(RouteState.Login.title) }
+                )
             }
 
             composable(RouteState.Home.title) {

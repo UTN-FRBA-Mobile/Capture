@@ -58,15 +58,7 @@ class NetworkUserRepository(
 
     override suspend fun signUp(username: String, password: String) {
         val body = SignupRequest(username, password)
-        try {
-            authApiService.signUp(body)
-        } catch (e: HttpException) {
-            when (e.code()) {
-                400 -> throw SignUpException("Username already exists.")
-                500 -> throw SignUpException("Server error during signup.")
-                else -> throw SignUpException("Something went wrong during signup.")
-            }
-        }
+        authApiService.signUp(body)
     }
 
 

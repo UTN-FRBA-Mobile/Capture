@@ -19,45 +19,38 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
+enum class SignupError(val title: String) {
+    Fatal("Fatal"),
+    UsernameExists("UsernameExists"),
+    PasswordsDoNotMatch("PasswordsDoNotMatch")
+}
+
 class SignUpViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _registered = MutableStateFlow(false)
     val registered: StateFlow<Boolean> = _registered
 
-    var registeredError by mutableStateOf<String?>(null)
+    var signupError by mutableStateOf<String?>(null)
 
     fun register(username: String, password: String, confirmPassword: String) {
 
         if (password != confirmPassword) {
-            registeredError = "Passwords do not match!"
+            signupError = SignupError.PasswordsDoNotMatch.title
             return
         }
 
         viewModelScope.launch {
             try {
-                userRepository.signUp(username, password) // This can throw a SignUpException
-                userRepository.login(username, password)  // This can throw a LoginException
+                userRepository.signUp(username, password)
                 _registered.value = true
-            } catch (e: SignUpException) {
-                // Handle sign-up specific exception
-                registeredError = "Issue during registration. Please try again."
-                _registered.value = false
-            } catch (e: LoginException) {
-                // Handle login specific exception during the sign-up process
-                registeredError = "Automatic login after registration failed. Please try logging in manually."
-                _registered.value = false
             } catch (e: HttpException) {
-                // Handle specific HTTP error codes
-                registeredError = when(e.code()) {
-                    409 -> "Username already exists"
-                    else -> "Something went wrong"
+                if (e.code() == 409) {
+                    signupError = SignupError.UsernameExists.title
                 }
                 _registered.value = false
             } catch (e: Exception) {
-                // Handle other general exceptions
-                Log.e("ERR", "There was an Exception ${e.message}")
                 e.printStackTrace()
-                registeredError = "Unexpected error occurred. Please try again."
                 _registered.value = false
+                signupError = SignupError.Fatal.title
             }
         }
 

@@ -6,13 +6,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -30,6 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.dadmapp.R
 import com.example.dadmapp.ui.components.CustomButton
 import com.example.dadmapp.ui.components.CustomTextField
+import com.example.dadmapp.ui.theme.LightRed
 
 @SuppressLint("StateFlowValueCalledInComposition")
 @Composable
@@ -64,14 +62,17 @@ fun LoginPage(
         mutableStateOf(false)
     }
 
-    if (viewModel.loginError != null) {
+    if (viewModel.loginError) {
         isLoading = false
         AlertDialog(
-            onDismissRequest = { viewModel.loginError = null },
+            onDismissRequest = { viewModel.resetError() },
             title = { Text(text = stringResource(R.string.LOGIN_ERROR_STR)) },
-            text = { Text(text = viewModel.loginError ?: "") },
+            text = {
+                val s = if (viewModel.invalidCredentialsError) stringResource(R.string.INVALID_CREDENTIALS) else stringResource(R.string.FATAL_ERROR_TEXT)
+                Text(s)
+               },
             confirmButton = {
-                TextButton(onClick = { viewModel.loginError = null }) {
+                TextButton(onClick = { viewModel.resetError() }) {
                     Text(stringResource(R.string.Ok))
                 }
             }
@@ -115,7 +116,6 @@ fun LoginPage(
             modifier = Modifier.padding(2.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-
         ) {
             CustomButton(label = stringResource(R.string.LOGIN), onClick = {
                 isLoading = true
@@ -123,8 +123,12 @@ fun LoginPage(
             }, enabled = allFieldsFilled, showLoading = isLoading)
             Spacer(modifier = Modifier.width(8.dp))
             Text(
-                text = stringResource(R.string.OR_SIGN_UP),
+                text = stringResource(R.string.OR) + " ",
                 color = Color.White,
+            )
+            Text(
+                text = stringResource(R.string.SIGN_UP),
+                color = LightRed,
                 modifier = Modifier.clickable { onNavigateToRegister() }
             )
         }

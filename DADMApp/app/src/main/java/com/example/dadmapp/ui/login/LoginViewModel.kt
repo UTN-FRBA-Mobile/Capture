@@ -13,20 +13,22 @@ import com.example.dadmapp.data.UserRepository
 import kotlinx.coroutines.launch
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import com.example.dadmapp.DADMAppApplication
-import com.example.dadmapp.data.FatalErrorHandler
-import com.example.dadmapp.exceptions.LoginException
-import kotlinx.coroutines.flow.MutableStateFlow
 import retrofit2.HttpException
 
 class LoginViewModel(
-    private val userRepository: UserRepository,
-    private val fatalErrorHandler: FatalErrorHandler
+    private val userRepository: UserRepository
 ): ViewModel() {
     var logged by mutableStateOf(false)
-    var loginError by mutableStateOf<String?>(null)
+    var invalidCredentialsError by mutableStateOf(false)
+    var loginError by mutableStateOf(false)
 
     init {
         isLogged()
+    }
+
+    fun resetError() {
+        invalidCredentialsError = false
+        loginError = false
     }
 
     private fun isLogged() {
@@ -41,18 +43,14 @@ class LoginViewModel(
             try {
                 userRepository.login(username, password)
                 logged = true
-            } catch (e: LoginException) {
-                Log.d("ERR", "There was a LoginException: ${e.message}")
-                loginError = e.message
             } catch (e: HttpException) {
-                Log.d("ERR", "There was an HttpException ${e.code()}")
-                loginError = when (e.code()) {
-                    401 -> "Invalid credentials"
-                    else -> "Something went wrong"
+                if (e.code() == 401) {
+                    invalidCredentialsError = true
                 }
+                loginError = true
             } catch (e: Exception) {
                 Log.d("ERR", "There was an Exception ${e.message}")
-                loginError = "Something went wrong."
+                loginError = true
             }
         }
     }
@@ -63,8 +61,7 @@ class LoginViewModel(
             initializer {
                 val application = (this[APPLICATION_KEY] as DADMAppApplication)
                 val userRepository = application.container.userRepository
-                val fatalErrorHandler = application.container.fatalErrorHandler
-                LoginViewModel(userRepository, fatalErrorHandler)
+                LoginViewModel(userRepository)
             }
         }
     }

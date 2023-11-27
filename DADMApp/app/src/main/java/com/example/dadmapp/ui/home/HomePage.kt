@@ -82,7 +82,7 @@ fun shouldDisplayNote(
         searchTerm != null &&
         (
             note.title == null ||
-            !note.title.lowercase().contains(searchTerm)
+            !note.title.lowercase().contains(searchTerm.lowercase())
         )
     ) {
         return false
