@@ -99,7 +99,8 @@ fun TagsColours(
 
                         Row(
                             Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(tag.name, color = Color.White, fontSize = 20.sp)
                             Box(

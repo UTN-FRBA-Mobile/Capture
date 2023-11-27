@@ -21,6 +21,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +29,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.dadmapp.R
@@ -122,12 +126,16 @@ fun TopSearchBar(
     onCloseIcon: () -> Unit,
     homePageViewModel: HomePageViewModel
 ) {
+    val focusRequester = remember {
+        FocusRequester()
+    }
     TextField(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
             .requiredHeight(60.dp)
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .focusRequester(focusRequester),
         value = homePageViewModel.searchTerm ?: "",
         onValueChange = {
             homePageViewModel.searchTerm = it
@@ -157,6 +165,10 @@ fun TopSearchBar(
         ),
         placeholder = {
             Text(text = "Search by title...")
-        }
+        },
     )
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 }
