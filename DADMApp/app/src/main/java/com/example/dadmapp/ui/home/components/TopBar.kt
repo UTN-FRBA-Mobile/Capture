@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -125,12 +126,13 @@ fun TopSearchBar(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .fillMaxWidth()
-            .requiredHeight(50.dp),
+            .requiredHeight(60.dp)
+            .wrapContentHeight(),
         value = homePageViewModel.searchTerm ?: "",
         onValueChange = {
             homePageViewModel.searchTerm = it
         },
+        singleLine = true,
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
@@ -152,6 +154,9 @@ fun TopSearchBar(
             focusedTextColor = Color.White,
             unfocusedTextColor = Color.White,
             disabledTextColor = Color.Gray
-        )
+        ),
+        placeholder = {
+            Text(text = "Search by title...")
+        }
     )
 }
